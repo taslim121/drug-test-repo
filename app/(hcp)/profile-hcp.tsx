@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet,TouchableOpacity } from 'react-native';
 import React from 'react';
 import Button from "@/components/Button";
 import { useAuth } from "@/provider/AuthProvider";
 import { supabase } from "@/lib/supabase";
-
+import { Platform } from 'react-native';
 const Profile = () => {
   const { user } = useAuth();
   return (
@@ -22,29 +22,46 @@ const Profile = () => {
           {user?.role === 'patient' ? 'Patient' : 'Healthcare Professional'}
         </Text>
       </View>
-      <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
+      <TouchableOpacity style={styles.button} onPress={() => supabase.auth.signOut()}>
+              <Text style={styles.buttonText}>Sign out</Text>
+            </TouchableOpacity>
     </View>
   );
 };
 
+
+//can we give different styling to the ios and android
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#f9f9f9',
+    
   },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 15,
+    borderRadius: 100,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   pic: {
     width: 70,
     height: 70,
-    fontSize: 30,
+    fontSize: 50,
     borderRadius: 35,
     backgroundColor: 'lightseagreen',
     color: '#fff',
+    paddingTop: 8,
     textAlign: 'center',
     textAlignVertical: 'center',
     marginRight: 15,
@@ -78,3 +95,5 @@ const styles = StyleSheet.create({
 });
 
 export default Profile;
+
+

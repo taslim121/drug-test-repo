@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/provider/AuthProvider';
 
 const Suggest = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const [query, setQuery] = useState('Drug Missing');
   const [description, setDescription] = useState('');
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'Drug Missing', value: 'Drug Missing' },
+    { label: 'Required More Info', value: 'Required More Info' },
+    { label: 'Other', value: 'Other' },
+  ]);
 
   const handleSubmit = async () => {
     if (description === '') {
@@ -32,17 +38,19 @@ const Suggest = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Submit a Suggestion</Text>
-      <Text style={{ marginBottom: 10 ,fontWeight:'bold'}}>Query</Text>
-      <Picker
-        selectedValue={query}
-        style={styles.picker}
-        onValueChange={(itemValue) => setQuery(itemValue)}
-      >
-        <Picker.Item label="Drug Missing" value="Drug Missing" />
-        <Picker.Item label="Required More Info" value="Required More Info" />
-        <Picker.Item label="Other" value="Other" />
-      </Picker>
-      <Text style={{ margin: 10,fontWeight:'bold' }}>Description upto 50 words</Text>
+      <Text style={{ marginBottom: 10, fontWeight: 'bold' }}>Query</Text>
+      <DropDownPicker
+        open={open}
+        value={query}
+        items={items}
+        setOpen={setOpen}
+        setValue={setQuery}
+        setItems={setItems}
+        containerStyle={styles.dropdown}
+        style={styles.dropdownInner}
+        textStyle={styles.dropdownText}
+      />
+      <Text style={{ margin: 10, fontWeight: 'bold' }}>Description up to 50 words</Text>
       <TextInput
         style={styles.textArea}
         value={description}
@@ -70,14 +78,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  picker: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
+  dropdown: {
     marginBottom: 10,
-    borderRadius: 100,
-    
+    height: 40,
+  },
+  dropdownInner: {
     backgroundColor: '#fff',
+    borderColor: '#ccc',
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: 'black',
   },
   textArea: {
     height: 100,

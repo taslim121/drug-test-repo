@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { Platform } from 'react-native';
 
 type SubClass = {
   sub_class_id: number;
@@ -135,7 +136,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+    ...Platform.select({
+          ios: {
+            marginTop:38
+          },
+          android: {
+            
+          },
+        }),
   },
   header: {
     padding: 20,

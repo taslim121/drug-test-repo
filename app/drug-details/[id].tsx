@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-
+import { Platform } from 'react-native';
 const DrugDetails: React.FC = () => {
   const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
   const [drugDetails, setDrugDetails] = useState<any[]>([]);
@@ -102,6 +102,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    ...Platform.select({
+      ios: {
+        marginTop:38
+      },
+      android: {
+        
+      },
+    }),
+    
+    
   },
   loadingContainer: {
     flex: 1,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { Link, Stack } from 'expo-router';
-import {Picker} from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { supabase } from '../../lib/supabase';
 import Button from '../../components/Button';
 import Colors from '../../constant/Colors';
@@ -12,6 +12,11 @@ const SignUpScreen = () => {
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('patient');
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'Patient', value: 'patient' },
+    { label: 'Health Care Professional', value: 'hcp' },
+  ]);
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -60,14 +65,17 @@ const SignUpScreen = () => {
       />
 
       <Text style={styles.label}>Role</Text>
-    <Picker
-      selectedValue={role}
-      onValueChange={(itemValue: string) => setRole(itemValue)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Patient" value="patient" />
-      <Picker.Item label="Health Care Professional" value="hcp" />
-    </Picker>
+      <DropDownPicker
+        open={open}
+        value={role}
+        items={items}
+        setOpen={setOpen}
+        setValue={setRole}
+        setItems={setItems}
+        containerStyle={styles.dropdownContainer}
+        style={styles.dropdown}
+        textStyle={styles.dropdownText}
+      />
 
       <Button text={loading ? 'Creating account...' : 'Create account'} onPress={signUpWithEmail} disabled={loading} />
       <Link href="/sign-in" style={styles.textButton}>
@@ -82,6 +90,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     flex: 1,
+    backgroundColor: '#f3f2ed',
   },
   label: {
     color: 'gray',
@@ -95,16 +104,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
   },
-  picker:{
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    marginTop: 5,
+  dropdownContainer: {
     marginBottom: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
+    zIndex: 1000, // Ensures the dropdown is above other elements
   },
-
+  dropdown: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+  },
+  dropdownInner: {
+    backgroundColor: 'white',
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: 'black',
+  },
   textButton: {
     alignSelf: 'center',
     fontWeight: 'bold',
@@ -112,4 +127,5 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
+
 export default SignUpScreen;
