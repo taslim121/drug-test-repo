@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, Text, TextInput,TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter,useLocalSearchParams,Stack} from 'expo-router';
 import { supabase } from '@/lib/supabase';
 
@@ -12,6 +12,7 @@ const DrugList = () => {
   const router = useRouter();
   const { sub_class_id ,subclassname} = useLocalSearchParams<{ sub_class_id: string,subclassname : string }>();
   const [drugs, setDrugs] = useState<Drug[]>([]);
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     const fetchDrugs = async () => {
@@ -36,14 +37,38 @@ const DrugList = () => {
     fetchDrugs();
   }, [sub_class_id]);
 
+  const filteredDrugs = drugs.filter(drug =>
+    drug.drug_name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+
   return (
     <View style={styles.container}>
         <Stack.Screen
-            options={{
-              headerTitle: `${subclassname}`,
-            }}/>
+                options={{
+                  headerTransparent: true,
+                  headerTitle: '',
+                }}
+              />
+              <View style={styles.header}>
+                <Text style={styles.headerText}>Subclass : {subclassname}</Text>
+              </View> 
+        <View style={styles.searchContainer}>
+                <TextInput
+                  style={styles.searchBar}
+                  placeholder="Search"
+                  value={filter}
+                  onChangeText={setFilter}
+                />
+                {filter.length > 0 && (
+                  <TouchableOpacity onPress={() => setFilter('')} style={styles.clearButton}>
+                    <Text style={styles.clearButtonText}>✕</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
       <FlatList
-        data={drugs}
+        data={filteredDrugs}
         keyExtractor={(item) => item.drug_id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -63,6 +88,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+  },
+  header: {
+    padding: 20,
+    backgroundColor: 'lightseagreen',
+    alignItems: 'center',
+    width: '100%',
+  },
+  headerText: {
+    fontSize: 18,
+    paddingHorizontal: 10,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    width: '90%',
+    marginTop: 10,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+  },
+  clearButton: {
+    justifyContent: 'center',
+  },
+  clearButtonText: {
+    fontSize: 16,
+    color: '#000',
+    paddingHorizontal: 8,
   },
   drugName: {
     fontSize: 18,

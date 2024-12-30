@@ -72,8 +72,9 @@ const DrugDetails: React.FC = () => {
             {item.food === 'NA' ? (
               <Text style={styles.cardTitle}>No Drug Food Interaction Available</Text>
             ) : (
-              <TouchableOpacity onPress={() => toggleExpansion(index)}>
+              <TouchableOpacity style={styles.touch} onPress={() => toggleExpansion(index)}>
                 <Text style={styles.cardTitle}>{item.food}</Text>
+                <Text style={styles.arrow}>{expandedItems[index] ? '˄' : '˅'}</Text>
               </TouchableOpacity>
             )}
             {expandedItems[index] && item.food !== 'NA' && (
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    padding: 15,
+    padding: 10,
     marginHorizontal: 20,
     marginVertical: 5,
     borderRadius: 10,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   cardsubTitle: {
     fontSize: 16,
@@ -164,6 +165,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6200ee',
     textDecorationLine: 'underline',
+  },
+  arrow: {
+    fontSize: 25,
+    color: '#000',
+    width: 25,
+  },
+  touch: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 2,
   },
 });
 

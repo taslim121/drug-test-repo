@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 
@@ -8,27 +9,45 @@ type Class = {
   class_name: string;
 };
 
+const CACHE_KEY = 'classes';
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
 const ClassList = () => {
   const router = useRouter();
   const [classes, setClasses] = useState<Class[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const { data: classData, error: classError } = await supabase
-          .from('classes')
-          .select('*')
-          .order('class_name', { ascending: true });
+        const cachedData = await AsyncStorage.getItem(CACHE_KEY);
+        const cachedTimestamp = await AsyncStorage.getItem(`${CACHE_KEY}_timestamp`);
+        const now = Date.now();
 
-        if (classError) {
-          console.error(classError);
-          return;
+        if (cachedData && cachedTimestamp && now - parseInt(cachedTimestamp) < CACHE_DURATION) {
+          setClasses(JSON.parse(cachedData));
+          setLoading(false);
+        } else {
+          const { data: classData, error: classError } = await supabase
+            .from('classes')
+            .select('*')
+            .order('class_name', { ascending: true });
+
+          if (classError) {
+            console.error(classError);
+            setLoading(false);
+            return;
+          }
+
+          setClasses(classData || []);
+          await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(classData));
+          await AsyncStorage.setItem(`${CACHE_KEY}_timestamp`, now.toString());
+          setLoading(false);
         }
-
-        setClasses(classData || []);
       } catch (error) {
         console.error('Unexpected error:', error);
+        setLoading(false);
       }
     };
 
@@ -57,18 +76,22 @@ const ClassList = () => {
           </TouchableOpacity>
         )}
       </View>
-      <FlatList
-        data={filteredClasses}
-        keyExtractor={(item) => item.class_id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => router.push({ pathname: `/sub-classes/[class_id]`, params: { class_id: item.class_id.toString() ,classname : item.class_name } })}
-          >
-            <Text style={styles.className}>{item.class_name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={filteredClasses}
+          keyExtractor={(item) => item.class_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push({ pathname: `/sub-classes/[class_id]`, params: { class_id: item.class_id.toString(), classname: item.class_name } })}
+            >
+              <Text style={styles.className}>{item.class_name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -78,6 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     width: '100%',

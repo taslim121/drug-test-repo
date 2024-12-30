@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 
@@ -12,32 +13,62 @@ const DrugList = () => {
   const router = useRouter();
   const [drugs, setDrugs] = useState<Drug[]>([]);
   const [filter, setFilter] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchDrugsFromDatabase = async () => {
+    try {
+      const { data: drugData, error: drugError } = await supabase
+        .from('drugs')
+        .select('*')
+        .order('drug_name', { ascending: true });
+
+      if (drugError) {
+        console.error(drugError);
+        return;
+      }
+
+      // Store data in AsyncStorage
+      await AsyncStorage.setItem('drugs', JSON.stringify(drugData));
+      setDrugs(drugData || []);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDrugs = async () => {
+    try {
+      // Try to load from AsyncStorage
+      const storedDrugs = await AsyncStorage.getItem('drugs');
+      if (storedDrugs) {
+        setDrugs(JSON.parse(storedDrugs));
+        setLoading(false);
+      } else {
+        // If not found in AsyncStorage, fetch from database
+        await fetchDrugsFromDatabase();
+      }
+    } catch (error) {
+      console.error('Error loading drugs:', error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDrugs = async () => {
-      try {
-        const { data: drugData, error: drugError } = await supabase
-          .from('drugs')
-          .select('*')
-          .order('drug_name', { ascending: true });
-
-        if (drugError) {
-          console.error(drugError);
-          return;
-        }
-
-        setDrugs(drugData || []);
-      } catch (error) {
-        console.error('Unexpected error:', error);
-      }
-    };
-
-    fetchDrugs();
+    loadDrugs();
   }, []);
 
   const filteredDrugs = drugs.filter(drug =>
     drug.drug_name.toLowerCase().includes(filter.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -79,8 +110,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center', // Center the content horizontally
-    justifyContent: 'center', // Center the content vertically
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     width: '100%',
@@ -88,7 +119,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#fff',
     alignItems: 'center',
-   
   },
   headerText: {
     fontSize: 20,
@@ -132,6 +162,11 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     width: '90%',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
