@@ -30,15 +30,21 @@ const SignUpScreen = () => {
         },
       },
     });
+    
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      Alert.alert('Success', 'Please verify your email to complete the sign-up process.',);
+    }
 
-    if (error) Alert.alert(error.message);
+   
     setLoading(false);
   }
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Sign up' }} />
-
+      <Stack.Screen options={{headerTransparent:true , title: 'Sign up', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      
       <Text style={styles.label}>Full Name</Text>
       <TextInput
         value={fullName}

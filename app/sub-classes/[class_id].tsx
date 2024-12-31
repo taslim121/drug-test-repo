@@ -3,6 +3,7 @@ import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet } from 'r
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { Platform } from 'react-native';
+import SearchBar from '@/components/Searchbar';
 
 type SubClass = {
   sub_class_id: number;
@@ -79,28 +80,8 @@ const SubClassList = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-              options={{
-                headerTransparent: true,
-                headerTitle: '',
-              }}
-            />
-            <View style={styles.header}>
-              <Text style={styles.headerText}>Class: {classname}</Text>
-            </View>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search"
-          value={filter}
-          onChangeText={setFilter}
-        />
-        {filter.length > 0 && (
-          <TouchableOpacity onPress={() => setFilter('')} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>✕</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <Stack.Screen options={{headerTransparent:false , title: `Class : ${classname}`, headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+            <SearchBar filter={filter} setFilter={setFilter} />
       {noSubClasses ? (
         <FlatList
           data={filteredDrugs}
@@ -193,6 +174,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
+    marginLeft:20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

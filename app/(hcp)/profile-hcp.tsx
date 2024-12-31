@@ -30,7 +30,7 @@ const Profile = () => {
 };
 
 
-//can we give different styling to the ios and android
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: 'lightseagreen',
     paddingVertical: 15,
     borderRadius: 100,
     alignItems: 'center',
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   },
   roleContainer: {
     alignItems: 'center',
+    marginTop:10,
     marginBottom: 30,
   },
   headerText: {

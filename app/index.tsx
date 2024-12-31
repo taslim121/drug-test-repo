@@ -17,7 +17,7 @@ export default function Index() {
     return <Redirect href={'/drugs-list'} />;
   }
   if(isHcp && !isAdmin && !isPatient){
-    return <Redirect href={'/(hcp)/hcp_home'} />;
+    return <Redirect href={'/(hcp)/hcp_home/DrugList'} />;
   }
 
   return (
@@ -25,7 +25,7 @@ export default function Index() {
       <Link href={'/drugs-list'} asChild>
         <Button text="Patient" />
       </Link>
-      <Link href={'/(hcp)/hcp_home'} asChild>
+      <Link href={'/(hcp)/hcp_home/DrugList'} asChild>
         <Button text="Hcp" />
       </Link>
       <Link href={'/crud-admin'} asChild>

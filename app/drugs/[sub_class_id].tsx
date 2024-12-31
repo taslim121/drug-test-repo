@@ -3,6 +3,7 @@ import { View, FlatList, Text, TextInput,TouchableOpacity, StyleSheet } from 're
 import { useRouter,useLocalSearchParams,Stack} from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { Platform } from 'react-native';
+import SearchBar from '@/components/Searchbar';
 type Drug = {
   drug_id: number;
   drug_name: string;
@@ -43,30 +44,12 @@ const DrugList = () => {
 
 
   return (
-    <View style={styles.container}>
-        <Stack.Screen
-                options={{
-                  headerTransparent: true,
-                  headerTitle: '',
-                }}
-              />
-              <View style={styles.header}>
-                <Text style={styles.headerText}>Subclass : {subclassname}</Text>
-              </View> 
-        <View style={styles.searchContainer}>
-                <TextInput
-                  style={styles.searchBar}
-                  placeholder="Search"
-                  value={filter}
-                  onChangeText={setFilter}
-                />
-                {filter.length > 0 && (
-                  <TouchableOpacity onPress={() => setFilter('')} style={styles.clearButton}>
-                    <Text style={styles.clearButtonText}>✕</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+    <View style={styles.container}> 
+       <Stack.Screen options={{headerTransparent:false , title: `SubClass : ${subclassname}`, headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff',headerTitleStyle:{fontSize:16} }} />
+              
+              <SearchBar filter={filter} setFilter={setFilter} />
 
+      <View style={styles.list}>
       <FlatList
         data={filteredDrugs}
         keyExtractor={(item) => item.drug_id.toString()}
@@ -79,6 +62,7 @@ const DrugList = () => {
           </TouchableOpacity>
         )}
       />
+      </View>
     </View>
   );
 };
@@ -95,6 +79,9 @@ const styles = StyleSheet.create({
             
           },
         }),
+  },
+  list:{
+    paddingLeft:10
   },
   header: {
     padding: 20,
@@ -139,6 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 15,
     marginVertical: 5,
+    marginLeft: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

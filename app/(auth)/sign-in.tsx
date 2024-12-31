@@ -23,8 +23,7 @@ const SignInScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Sign in' }} />
-
+      <Stack.Screen options={{headerTransparent:false , title: 'Sign In', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
@@ -37,7 +36,7 @@ const SignInScreen = () => {
       <TextInput
         value={password}
         onChangeText={setPassword}
-        placeholder=""
+        placeholder="password"
         style={styles.input}
         secureTextEntry
       />

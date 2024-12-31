@@ -1,12 +1,13 @@
 import { View, Text,StyleSheet, Button,TouchableOpacity} from 'react-native'
 import React from 'react'
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 
 
 const main = () => {
     const router = useRouter();
   return (
     <View>
+      <Stack.Screen options={{headerTransparent:true,headerTitle:''}}/>
       <View style={styles.container}>
         <Text style={styles.text}>
             Your Ultimate

@@ -47,15 +47,8 @@ const DrugDetails: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          headerTitle: '',
-        }}
-      />
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Food Interaction</Text>
-      </View>
+      <Stack.Screen options={{headerTransparent:false , title: 'Food Interaction', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      
       <View style={styles.drugInfo}>
         <Text style={styles.cardTitle}>Drug Name: {name}</Text>
       </View>
