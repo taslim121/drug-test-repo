@@ -79,7 +79,7 @@ const DrugList: React.FC<DrugListProps> = ({ filter }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => router.push({ pathname: `/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
+            onPress={() => router.push({ pathname: `/hcp_dynamic/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
           >
             <Text style={styles.drugName}>{item.drug_name}</Text>
           </TouchableOpacity>
@@ -110,6 +110,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: '90%',
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
   },
   loadingContainer: {
     flex: 1,

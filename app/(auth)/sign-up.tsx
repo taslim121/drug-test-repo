@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { Link, Stack } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import Button from '../../components/Button';
 import Colors from '../../constant/Colors';
 

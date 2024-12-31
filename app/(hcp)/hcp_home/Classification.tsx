@@ -58,7 +58,8 @@ const ClassList: React.FC<ClassListProps> = ({ filter }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push({ pathname: `/sub-classes/[class_id]`, params: { class_id: item.class_id.toString(), classname: item.class_name } })}
+              onPress={() => router.push({ pathname: `/hcp_dynamic/sub-classes/[class_id]`, params: { class_id: item.class_id.toString(), classname: item.class_name } })}
+              activeOpacity={0.7}
             >
               <Text style={styles.className}>{item.class_name}</Text>
             </TouchableOpacity>
@@ -90,6 +91,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: '90%',
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
   },
 });
 

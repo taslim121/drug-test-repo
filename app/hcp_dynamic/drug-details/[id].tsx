@@ -147,6 +147,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: '#000',
   },
   cardTitle: {
     fontSize: 18,

@@ -89,7 +89,7 @@ const SubClassList = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push({ pathname: `/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
+              onPress={() => router.push({ pathname: `/hcp_dynamic/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
             >
               <Text style={styles.drugName}>{item.drug_name}</Text>
             </TouchableOpacity>
@@ -102,7 +102,7 @@ const SubClassList = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push({ pathname: `/drugs/[sub_class_id]`, params: { sub_class_id: item.sub_class_id.toString(), subclassname: item.name } })}
+              onPress={() => router.push({ pathname: `/hcp_dynamic/drugs/[sub_class_id]`, params: { sub_class_id: item.sub_class_id.toString(), subclassname: item.name } })}
             >
               <Text style={styles.subClassName}>{item.name}</Text>
             </TouchableOpacity>
@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     width: '90%',
+    borderWidth: 1,
+    borderColor: '#000',
   },
 });
 

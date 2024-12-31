@@ -2,14 +2,14 @@
 import { Tabs ,Stack,Redirect} from 'expo-router'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from '@/provider/AuthProvider';
-
+import TabBarBackground from '@/components/ui/TabBarBackground';
 export default function HcpLayout() {
   const {session,isPatient} = useAuth();
   if(!session || isPatient){
     return <Redirect href={'/'} />;
   }
   return (
-    <Tabs screenOptions={{headerShown:false}}>
+    <Tabs screenOptions={{headerShown:false,tabBarBackground: TabBarBackground}}>
       
       
     <Tabs.Screen name="hcp_home"
