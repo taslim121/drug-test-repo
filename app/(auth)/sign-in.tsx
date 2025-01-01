@@ -1,14 +1,15 @@
-import { View, Text,Alert,AppState, TextInput, StyleSheet } from 'react-native';
+import { View, Text,Alert,AppState, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import Colors from '../../constant/Colors';
-import { Link, Stack } from 'expo-router';
+import { Link, router, Stack,useRouter } from 'expo-router';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading,setLoading] = useState(false);
+  const router = useRouter();
   
   async function signInWithEmail() {
     setLoading(true)
@@ -23,7 +24,7 @@ const SignInScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTransparent:false , title: 'Sign In', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      <Stack.Screen options={{headerTransparent:false , title: 'Sign In', headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff' }} />
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
@@ -42,9 +43,9 @@ const SignInScreen = () => {
       />
 
       <Button text={loading ? 'Signing in...' : 'Sign in'} onPress={signInWithEmail} disabled={loading} />
-      <Link href="/sign-up" style={styles.textButton}>
-        Create an account
-      </Link>
+      <TouchableOpacity onPress={()=> router.replace('/sign-up')} style={styles.textButton}>
+        <Text style={{color:'#0a7ea4'}}>Create an account</Text>
+      </TouchableOpacity>
     </View>
   );
 };

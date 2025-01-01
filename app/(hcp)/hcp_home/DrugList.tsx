@@ -1,9 +1,10 @@
 // screens/DrugList.tsx
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet,ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 
 type Drug = {
   drug_id: number;
@@ -16,60 +17,33 @@ type DrugListProps = {
 
 const DrugList: React.FC<DrugListProps> = ({ filter }) => {
   const router = useRouter();
-  const [drugs, setDrugs] = useState<Drug[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchDrugsFromDatabase = async () => {
-    try {
-      const { data: drugData, error: drugError } = await supabase
-        .from('drugs')
-        .select('*')
-        .order('drug_name', { ascending: true });
-
-      if (drugError) {
-        console.error(drugError);
-        return;
-      }
-
-      await AsyncStorage.setItem('drugs', JSON.stringify(drugData));
-      setDrugs(drugData || []);
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    } finally {
-      setLoading(false);
+  const {data : Drugs, isLoading, error } = useQuery<Drug[]>({
+      queryKey: ['drugs'],
+      queryFn: async () => {
+        const { data , error } =  await supabase
+                .from('drugs')
+                .select('*')
+                .order('drug_name', { ascending: true });
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data;
+      },
+    });
+    if(isLoading){
+      return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
     }
-  };
-
-  const loadDrugs = async () => {
-    try {
-      const storedDrugs = await AsyncStorage.getItem('drugs');
-      if (storedDrugs) {
-        setDrugs(JSON.parse(storedDrugs));
-        setLoading(false);
-      } else {
-        await fetchDrugsFromDatabase();
-      }
-    } catch (error) {
-      console.error('Error loading drugs:', error);
-      setLoading(false);
+    if(error){
+      return <Text>Error: {error.message}</Text>;
     }
-  };
+  
+  
 
-  useEffect(() => {
-    loadDrugs();
-  }, []);
-
-  const filteredDrugs = drugs.filter(drug =>
+  const filteredDrugs = Drugs?.filter(drug =>
     drug.drug_name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>

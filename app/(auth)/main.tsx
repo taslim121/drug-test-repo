@@ -11,7 +11,7 @@ const main = () => {
       <View style={styles.container}>
         <Text style={styles.text}>
             Your Ultimate
-            <Text style={{color : 'purple' }}> Drug Interaction </Text>
+            <Text style={{color : '#0a7ea4' }}> Drug Interaction </Text>
             App
         </Text>
         <Text style={styles.text1}>
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         color: 'darkgray',
     },
     btn:{
-        backgroundColor: 'purple',
+        backgroundColor: '#0a7ea4',
         padding: 10,
         borderRadius: 5,
         marginHorizontal: 20,

@@ -80,7 +80,7 @@ const SubClassList = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTransparent:false , title: `Class : ${classname}`, headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      <Stack.Screen options={{headerTransparent:false , title: `Class : ${classname}`, headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff' }} />
             <SearchBar filter={filter} setFilter={setFilter} />
       {noSubClasses ? (
         <FlatList

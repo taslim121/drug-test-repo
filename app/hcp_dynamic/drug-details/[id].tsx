@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Platform } from 'react-native';
 const DrugDetails: React.FC = () => {
   const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
@@ -47,7 +48,7 @@ const DrugDetails: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTransparent:false , title: 'Food Interaction', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      <Stack.Screen options={{headerTransparent:false , title: 'Food Interaction', headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff' }} />
       
       <View style={styles.drugInfo}>
         <Text style={styles.cardTitle}>Drug Name: {name}</Text>
@@ -65,13 +66,16 @@ const DrugDetails: React.FC = () => {
             {item.food === 'NA' ? (
               <Text style={styles.cardTitle}>No Drug Food Interaction Available</Text>
             ) : (
+              //add gap between two components of touchable opacity below 
               <TouchableOpacity style={styles.touch} onPress={() => toggleExpansion(index)}>
                 <Text style={styles.cardTitle}>{item.food}</Text>
-                <Text style={styles.arrow}>{expandedItems[index] ? '˄' : '˅'}</Text>
+                
+                <FontAwesome name="chevron-right" size={15} color="black" style={{ transform: [{ rotate: expandedItems[index] ? '90deg' : '0deg' }] }}/>
               </TouchableOpacity>
             )}
             {expandedItems[index] && item.food !== 'NA' && (
               <>
+                <View style={{borderBottomColor: 'black', borderBottomWidth: 1, marginBottom : 3}} />
                 <Text style={styles.cardsubTitle}>Mechanisms of Action:</Text>
                 <Text style={styles.cardText}>{item.mechanism_of_action}</Text>
                 <Text style={styles.cardsubTitle}>Severity:</Text>
@@ -178,8 +182,8 @@ const styles = StyleSheet.create({
   },
   touch: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 2,
   },
 });
 

@@ -45,7 +45,7 @@ const DrugList = () => {
 
   return (
     <View style={styles.container}> 
-       <Stack.Screen options={{headerTransparent:false , title: `SubClass : ${subclassname}`, headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff',headerTitleStyle:{fontSize:16} }} />
+       <Stack.Screen options={{headerTransparent:false , title: `SubClass : ${subclassname}`, headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff',headerTitleStyle:{fontSize:16} }} />
               
               <SearchBar filter={filter} setFilter={setFilter} />
 

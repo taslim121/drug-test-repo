@@ -1,12 +1,9 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import Suggest from '@/components/main/Suggest'
 
-const suggest = () => {
-  return (
-    <View>
-      <Text>suggest</Text>
-    </View>
-  )
+const Suggestion= () => {
+  return <Suggest/>
 }
 
-export default suggest;
+export default Suggestion

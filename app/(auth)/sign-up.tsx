@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { View, Text, TextInput, StyleSheet, Alert,TouchableOpacity } from 'react-native';
+import { Link, Stack,useRouter } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { supabase } from '@/lib/supabase';
 import Button from '../../components/Button';
@@ -8,6 +8,7 @@ import Colors from '../../constant/Colors';
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
+  const router = useRouter();
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('patient');
@@ -43,7 +44,7 @@ const SignUpScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTransparent:true , title: 'Sign up', headerStyle:{ backgroundColor: 'lightseagreen'}, headerTintColor: '#fff' }} />
+      <Stack.Screen options={{headerTransparent:true , title: 'Sign up', headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff' }} />
       
       <Text style={styles.label}>Full Name</Text>
       <TextInput
@@ -84,9 +85,9 @@ const SignUpScreen = () => {
       />
 
       <Button text={loading ? 'Creating account...' : 'Create account'} onPress={signUpWithEmail} disabled={loading} />
-      <Link href="/sign-in" style={styles.textButton}>
-        Sign in
-      </Link>
+      <TouchableOpacity onPress={()=> router.replace('/sign-in')} style={styles.textButton}>
+              <Text style={{color:'#0a7ea4'}}>Sign In</Text>
+            </TouchableOpacity>
     </View>
   );
 };

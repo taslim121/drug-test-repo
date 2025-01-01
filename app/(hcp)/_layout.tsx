@@ -9,9 +9,7 @@ export default function HcpLayout() {
     return <Redirect href={'/'} />;
   }
   return (
-    <Tabs screenOptions={{headerShown:false,tabBarBackground: TabBarBackground}}>
-      
-      
+    <Tabs screenOptions={{headerShown:false,tabBarStyle:{backgroundColor:'#a9e8fc'},tabBarActiveTintColor:'#0a7ea4',tabBarInactiveTintColor:'gray',tabBarShowLabel:true,tabBarBackground:TabBarBackground}}>
     <Tabs.Screen name="hcp_home"
      options={{
       tabBarLabel: 'Drugs',
