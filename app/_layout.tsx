@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useColorScheme,Platform } from "react-native"
 import AuthProvider from '@/provider/AuthProvider';
 import QueryProvider from '@/provider/QueryProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,8 +30,8 @@ export default function RootLayout() {
   
     
   return (
-    
-     <AuthProvider>
+    <SafeAreaView edges={['top']} style={{flex : 1,backgroundColor :'#fff'}}>
+       <AuthProvider>
     <QueryProvider>
     <Stack>
       
@@ -39,8 +40,7 @@ export default function RootLayout() {
       <Stack.Screen 
      name="(hcp)" 
      options={{ 
-       headerShown: Platform.OS === 'ios', 
-       headerTitle: Platform.OS === 'ios' ? 'HealthCare Prof.' : undefined 
+       headerShown: false, 
      }} 
       />
       <Stack.Screen name="(admin)" options={{ headerShown: false }} />
@@ -52,6 +52,8 @@ export default function RootLayout() {
     </Stack>
     </QueryProvider>
      </AuthProvider>
+    </SafeAreaView>
+    
     
   );
 }

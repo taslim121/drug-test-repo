@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
+import React, { useState } from 'react';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRouter, useLocalSearchParams, Stack,Redirect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { Platform } from 'react-native';
 import SearchBar from '@/components/Searchbar';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/provider/AuthProvider';
 
 type SubClass = {
   sub_class_id: number;
@@ -16,73 +18,70 @@ type Drug = {
 };
 
 const SubClassList = () => {
+  const {session,isPatient} = useAuth();
+    if(!session || isPatient){
+      return <Redirect href={'/'} />;
+    }
   const router = useRouter();
   const { class_id, classname } = useLocalSearchParams<{ class_id: string, classname: string }>();
-  const [subClasses, setSubClasses] = useState<SubClass[]>([]);
-  const [drugs, setDrugs] = useState<Drug[]>([]);
-  const [noSubClasses, setNoSubClasses] = useState(false);
   const [filter, setFilter] = useState<string>('');
 
-  useEffect(() => {
-    const fetchSubClasses = async () => {
-      try {
-        const { data: subClassData, error: subClassError } = await supabase
-          .from('sub_classes')
-          .select('*')
-          .eq('class_id', class_id)
-          .order('name', { ascending: true });
-
-        if (subClassError) {
-          console.error(subClassError);
-          return;
-        }
-
-        if (subClassData.length === 0) {
-          setNoSubClasses(true);
-          fetchDrugsByClassId();
-        } else {
-          setSubClasses(subClassData || []);
-        }
-      } catch (error) {
-        console.error('Unexpected error:', error);
+  const { data: subClasses, isLoading: isSubClassesLoading, error: subClassesError } = useQuery<SubClass[]>({
+    queryKey: ['sub_classes', class_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sub_classes')
+        .select('*')
+        .eq('class_id', class_id)
+        .order('name', { ascending: true });
+      if (error) {
+        throw new Error(error.message);
       }
-    };
+      return data;
+    },
+  });
 
-    const fetchDrugsByClassId = async () => {
-      try {
-        const { data: drugData, error: drugError } = await supabase
-          .from('drugs')
-          .select('*')
-          .eq('class_id', class_id)
-          .order('drug_name', { ascending: true });
-
-        if (drugError) {
-          console.error(drugError);
-          return;
-        }
-
-        setDrugs(drugData || []);
-      } catch (error) {
-        console.error('Unexpected error:', error);
+  const { data: drugs, isLoading: isDrugsLoading, error: drugsError } = useQuery<Drug[]>({
+    queryKey: ['drugs', class_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('drugs')
+        .select('*')
+        .eq('class_id', class_id)
+        .order('drug_name', { ascending: true });
+      if (error) {
+        throw new Error(error.message);
       }
-    };
+      return data;
+    },
+    enabled: subClasses?.length === 0, // Only fetch drugs if there are no sub-classes
+  });
 
-    fetchSubClasses();
-  }, [class_id]);
+  if (isSubClassesLoading || isDrugsLoading) {
+    return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
+  }
 
-  const filteredSubClasses = subClasses.filter(subClass =>
+  if (subClassesError) {
+    return <Text>Error: {subClassesError.message}</Text>;
+  }
+
+  if (drugsError) {
+    return <Text>Error: {drugsError.message}</Text>;
+  }
+
+  const filteredSubClasses = subClasses?.filter(subClass =>
     subClass.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const filteredDrugs = drugs.filter(drug =>
+  const filteredDrugs = drugs?.filter(drug =>
     drug.drug_name.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTransparent:false , title: `Class : ${classname}`, headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff' }} />
-            <SearchBar filter={filter} setFilter={setFilter} />
-      {noSubClasses ? (
+      <Stack.Screen options={{ headerTransparent: false, title: `Class : ${classname}`, headerStyle: { backgroundColor: '#0a7ea4' }, headerTintColor: '#fff' }} />
+      <SearchBar filter={filter} setFilter={setFilter} />
+      {subClasses?.length === 0 ? (
         <FlatList
           data={filteredDrugs}
           keyExtractor={(item) => item.drug_id.toString()}
@@ -118,13 +117,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     ...Platform.select({
-          ios: {
-            marginTop:38
-          },
-          android: {
-            
-          },
-        }),
+      ios: {
+        marginTop: 38
+      },
+      android: {
+      },
+    }),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     padding: 20,
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
-    marginLeft:20,
+    marginLeft: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

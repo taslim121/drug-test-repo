@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking, Image } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams,Redirect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/provider/AuthProvider';
 
 type Product = {
   instructions: string;
@@ -22,6 +23,10 @@ const fetchImageUrl = async (path: string) => {
 };
 
 const DrugDetails: React.FC = () => {
+   const { session,isHcp} = useAuth();
+    if (!session || isHcp) {
+      return <Redirect href={'/'} />;
+    }
   const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
 
   const { data: directionData, isLoading, error } = useQuery<Product>({

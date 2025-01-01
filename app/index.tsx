@@ -1,11 +1,11 @@
 import { ActivityIndicator, Text, View } from "react-native";
-import { Redirect, Link } from "expo-router";
+import { Redirect, Link, Stack } from "expo-router";
 import Button from "@/components/Button";
 import { useAuth } from "@/provider/AuthProvider";
 import { supabase } from "@/lib/supabase";
 
 export default function Index() {
-  const { session, loading,isAdmin,isHcp,isPatient,user} = useAuth();
+  const { session, loading,isAdmin,isHcp,isPatient} = useAuth();
 
   if (loading) {
     return <ActivityIndicator />;
@@ -22,6 +22,7 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
+      <Stack.Screen options={{headerShown:false}} />
       <Link href={'/drugs-list'} asChild>
         <Button text="Patient" />
       </Link>

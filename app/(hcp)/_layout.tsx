@@ -3,12 +3,14 @@ import { Tabs ,Stack,Redirect} from 'expo-router'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from '@/provider/AuthProvider';
 import TabBarBackground from '@/components/ui/TabBarBackground';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function HcpLayout() {
   const {session,isPatient} = useAuth();
   if(!session || isPatient){
     return <Redirect href={'/'} />;
   }
   return (
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#fff' }}>
     <Tabs screenOptions={{headerShown:false,tabBarStyle:{backgroundColor:'#a9e8fc'},tabBarActiveTintColor:'#0a7ea4',tabBarInactiveTintColor:'gray',tabBarShowLabel:true,tabBarBackground:TabBarBackground}}>
     <Tabs.Screen name="hcp_home"
      options={{
@@ -37,5 +39,6 @@ export default function HcpLayout() {
     }
     />
     </Tabs>
+    </SafeAreaView>
   );
 }

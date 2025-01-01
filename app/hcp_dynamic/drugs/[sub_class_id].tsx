@@ -1,67 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TextInput,TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter,useLocalSearchParams,Stack} from 'expo-router';
+import React, { useState } from 'react';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import { useRouter, useLocalSearchParams, Stack, Redirect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { Platform } from 'react-native';
 import SearchBar from '@/components/Searchbar';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/provider/AuthProvider';
+
 type Drug = {
   drug_id: number;
   drug_name: string;
 };
 
 const DrugList = () => {
+  const { session, isPatient } = useAuth();
+  if (!session || isPatient) {
+    return <Redirect href="/" />;
+  }
+
   const router = useRouter();
-  const { sub_class_id ,subclassname} = useLocalSearchParams<{ sub_class_id: string,subclassname : string }>();
-  const [drugs, setDrugs] = useState<Drug[]>([]);
+  const { sub_class_id, subclassname } = useLocalSearchParams<{ sub_class_id: string, subclassname: string }>();
   const [filter, setFilter] = useState<string>('');
 
-  useEffect(() => {
-    const fetchDrugs = async () => {
-      try {
-        const { data: drugData, error: drugError } = await supabase
-          .from('drugs')
-          .select('*')
-          .eq('subclass_id', sub_class_id)
-          .order('drug_name', { ascending: true });
-
-        if (drugError) {
-          console.error(drugError);
-          return;
-        }
-
-        setDrugs(drugData || []);
-      } catch (error) {
-        console.error('Unexpected error:', error);
+  const { data: drugs, isLoading, error } = useQuery<Drug[]>({
+    queryKey: ['drugs', sub_class_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('drugs')
+        .select('*')
+        .eq('subclass_id', sub_class_id)
+        .order('drug_name', { ascending: true });
+      if (error) {
+        throw new Error(error.message);
       }
-    };
+      return data;
+    },
+  });
 
-    fetchDrugs();
-  }, [sub_class_id]);
+  if (isLoading) {
+    return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
+  }
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
 
-  const filteredDrugs = drugs.filter(drug =>
+  const filteredDrugs = drugs?.filter(drug =>
     drug.drug_name.toLowerCase().includes(filter.toLowerCase())
   );
 
-
   return (
-    <View style={styles.container}> 
-       <Stack.Screen options={{headerTransparent:false , title: `SubClass : ${subclassname}`, headerStyle:{ backgroundColor: '#0a7ea4'}, headerTintColor: '#fff',headerTitleStyle:{fontSize:16} }} />
-              
-              <SearchBar filter={filter} setFilter={setFilter} />
+    <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerTransparent: false,
+          title: `SubClass : ${subclassname}`,
+          headerStyle: { backgroundColor: '#0a7ea4' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontSize: 16 },
+        }}
+      />
+
+      <SearchBar filter={filter} setFilter={setFilter} />
 
       <View style={styles.list}>
-      <FlatList
-        data={filteredDrugs}
-        keyExtractor={(item) => item.drug_id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => router.push({ pathname: `/hcp_dynamic/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
-          >
-            <Text style={styles.drugName}>{item.drug_name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+        <FlatList
+          data={filteredDrugs}
+          keyExtractor={(item) => item.drug_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push({ pathname: `/hcp_dynamic/drug-details/[id]`, params: { id: item.drug_id.toString(), name: item.drug_name } })}
+            >
+              <Text style={styles.drugName}>{item.drug_name}</Text>
+            </TouchableOpacity>
+          )}
+        />
       </View>
     </View>
   );
@@ -72,51 +84,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     ...Platform.select({
-          ios: {
-            marginTop:38
-          },
-          android: {
-            
-          },
-        }),
+      ios: {
+        marginTop: 38,
+      },
+    }),
   },
-  list:{
-    paddingLeft:10
+  list: {
+    flex: 1,  // Ensure the FlatList container takes up the available space
+    paddingLeft: 10,
   },
-  header: {
-    padding: 20,
-    backgroundColor: 'lightseagreen',
-    alignItems: 'center',
-    width: '100%',
-  },
-  headerText: {
-    fontSize: 18,
-    paddingHorizontal: 10,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    width: '90%',
-    marginTop: 10,
-  },
-  searchBar: {
+  loadingContainer: {
     flex: 1,
-    height: 40,
-  },
-  clearButton: {
     justifyContent: 'center',
-  },
-  clearButtonText: {
-    fontSize: 16,
-    color: '#000',
-    paddingHorizontal: 8,
+    alignItems: 'center',
   },
   drugName: {
     fontSize: 18,

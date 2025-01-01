@@ -20,6 +20,15 @@ export default function AdminLayout() {
      }}  />
     <Tabs.Screen name='user-manage'
     options={{
+      tabBarLabel: 'Users',
+      tabBarIcon: ({color,size}) => (
+        <FontAwesome name="users" size={size} color={color} />
+      )
+    }
+    }
+    />
+    <Tabs.Screen name='Suggestions'
+    options={{
       tabBarLabel: 'Explore',
       tabBarIcon: ({color,size}) => (
         <FontAwesome name="search" size={size} color={color} />

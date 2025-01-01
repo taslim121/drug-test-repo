@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 
 type Class = {
   class_id: number;
@@ -15,57 +16,45 @@ type ClassListProps = {
 
 const ClassList: React.FC<ClassListProps> = ({ filter }) => {
   const router = useRouter();
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const { data: classData, error: classError } = await supabase
-          .from('classes')
-          .select('*')
-          .order('class_name', { ascending: true });
-
-        if (classError) {
-          console.error(classError);
-          setLoading(false);
-          return;
-        }
-
-        setClasses(classData || []);
-        setLoading(false);
-      } catch (error) {
-        console.error('Unexpected error:', error);
-        setLoading(false);
+  const {data : Classes, isLoading, error } = useQuery<Class[]>({
+    queryKey: ['classes'],
+    queryFn: async () => {
+      const { data , error } =  await supabase
+              .from('classes')
+              .select('*')
+              .order('class_name', { ascending: true });
+      if (error) {
+        throw new Error(error.message);
       }
-    };
+      return data;
+    },
+  });
+  if(isLoading){
+    return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
+  }
+  if(error){
+    return <Text>Error: {error.message}</Text>;
+  }
 
-    fetchClasses();
-  }, []);
-
-  const filteredClasses = classes.filter(cls =>
+  const filteredClasses = Classes?.filter(cls =>
     cls.class_name.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
         <FlatList
           data={filteredClasses}
           keyExtractor={(item) => item.class_id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push({ pathname: `/hcp_dynamic/sub-classes/[class_id]`, params: { class_id: item.class_id.toString(), classname: item.class_name } })}
+              onPress={() => router.push({ pathname: '/hcp_dynamic/sub-classes/[class_id]', params: { class_id: item.class_id.toString(), classname: item.class_name } })}
               activeOpacity={0.7}
             >
               <Text style={styles.className}>{item.class_name}</Text>
             </TouchableOpacity>
           )}
         />
-      )}
     </View>
   );
 };
@@ -93,6 +82,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderWidth: 1,
     borderColor: '#000',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

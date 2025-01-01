@@ -1,33 +1,38 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams,Redirect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Platform } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/provider/AuthProvider';
 const DrugDetails: React.FC = () => {
-  const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
-  const [drugDetails, setDrugDetails] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>({});
 
-  const fetchDrugDetails = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('interactions')
-      .select('*')
-      .eq('drug_id', id);
-
-    if (error) {
-      console.error(error);
-    } else {
-      setDrugDetails(data);
+  const {session,isPatient} = useAuth();
+    if(!session || isPatient){
+      return <Redirect href={'/'} />;
     }
-    setLoading(false);
-  }, [id]);
-
-  useEffect(() => {
-    fetchDrugDetails();
-  }, [fetchDrugDetails]);
+  const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
+  const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>({});
+  const {data : drugDetails, isLoading, error } = useQuery<any[]>({
+    queryKey: ['interactions',id],
+    queryFn: async () => {
+      const { data , error } =  await supabase
+              .from('interactions')
+              .select('*')
+              .eq('drug_id',id)
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+  });
+  if(isLoading){
+    return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
+  }
+  if(error){
+    return <Text>Error: {error.message}</Text>;
+  }
 
   const toggleExpansion = (index: number) => {
     setExpandedItems((prevExpandedItems) => ({
@@ -36,15 +41,9 @@ const DrugDetails: React.FC = () => {
     }));
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
-      </View>
-    );
-  }
 
-  const hasFoodInteractions = drugDetails.some(item => item.food !== 'NA');
+
+  const hasFoodInteractions = drugDetails?.some(item => item.food !== 'NA');
 
   return (
     <View style={styles.container}>
