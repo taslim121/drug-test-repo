@@ -27,7 +27,7 @@ export default function AdminLayout() {
     }
     }
     />
-    <Tabs.Screen name='Suggestions'
+    <Tabs.Screen name='Suggestion'
     options={{
       tabBarLabel: 'Explore',
       tabBarIcon: ({color,size}) => (

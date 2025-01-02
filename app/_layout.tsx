@@ -50,6 +50,7 @@ export default function RootLayout() {
       <Stack.Screen name="patient_dynamic/drugs-pt/[id]" options={{ headerShown: true }} />
       <Stack.Screen name="+not-found" />
     </Stack>
+    <StatusBar style='auto' />
     </QueryProvider>
      </AuthProvider>
     </SafeAreaView>
