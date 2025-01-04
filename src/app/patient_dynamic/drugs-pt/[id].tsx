@@ -5,8 +5,6 @@ import supabase from '../../../lib/supabase';
 import { Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../provider/AuthProvider';
-import parseAndRenderText from '../../utils/parsehttp';
-
 type Product = {
   instructions: string;
   references: string;
@@ -70,7 +68,7 @@ const DrugDetails: React.FC = () => {
       </View>
       <FlatList
         data={directionData ? [directionData] : []}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
             {item.image_path ? (
@@ -83,12 +81,6 @@ const DrugDetails: React.FC = () => {
               <View>
                 <Text style={styles.cardsubTitle}>Instruction:</Text>
                 <Text style={styles.cardText}>{item.instructions}</Text>
-              </View>
-            ):null}
-            {item.references?(
-              <View>
-                <Text style={styles.cardsubTitle}>Reference:</Text>
-                <View>{parseAndRenderText(item.references)}</View>
               </View>
             ):null}
           </View>

@@ -6,7 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../provider/AuthProvider';
-import parseAndRenderText from '../../utils/parsehttp';
+import parseAndRenderText from '../../../utils/parsehttp';
 const DrugDetails: React.FC = () => {
 
   const {session,isPatient} = useAuth();

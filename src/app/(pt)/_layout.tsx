@@ -2,6 +2,7 @@ import { Tabs, Redirect } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from '../../provider/AuthProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import headerRight from '../../utils/headerRight';
 
 export default function PatientLayout() {
   const { session,isHcp} = useAuth();
@@ -15,6 +16,12 @@ export default function PatientLayout() {
         name="drugs-list"
         options={{
           tabBarLabel: 'Home',
+          headerShown: true,
+          headerTitle: '',
+          headerStyle: {
+            height: 70,
+          },
+          headerRight: headerRight,
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="home" size={size} color={color} />
           ),

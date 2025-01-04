@@ -1,43 +1,64 @@
-
-import { Tabs ,Stack,Redirect} from 'expo-router'
+import { Tabs, Stack, Redirect, Link } from 'expo-router';
+import { Text, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useAuth } from '../../provider/AuthProvider';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import  headerRight from '../../utils/headerRight'
+
 export default function HcpLayout() {
-  const {session,isPatient} = useAuth();
-  if(!session || isPatient){
+  const { session, isPatient } = useAuth();
+  const router = useRouter();
+
+  if (!session || isPatient) {
     return <Redirect href={'/'} />;
   }
-  return (
-    
-    <Tabs screenOptions={{headerShown:false,tabBarStyle:{backgroundColor:'#a9e8fc'},tabBarActiveTintColor:'#0a7ea4',tabBarInactiveTintColor:'gray',tabBarShowLabel:true,}}>
-    <Tabs.Screen name="hcp_home"
-     options={{
-      tabBarLabel: 'Drugs',
-      tabBarIcon: ({color,size}) => (
-        <FontAwesome name="home" size={size} color={color} />
-      )
 
-     }}  />
-     <Tabs.Screen name='profile-hcp'
-    options={{
-      tabBarLabel: 'Profile',
-      tabBarIcon: ({color,size}) => (
-        <FontAwesome name="user" size={size} color={color} />
-      )
-    }
-    }
-    />
-    <Tabs.Screen name='suggest-hcp'
-    options={{
-      tabBarLabel: 'Suggestions',
-      tabBarIcon: ({color,size}) => (
-        <FontAwesome name="search" size={size} color={color} />
-      )
-    }
-    }
-    />
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { backgroundColor: '#a9e8fc' },
+        tabBarActiveTintColor: '#0a7ea4',
+        tabBarInactiveTintColor: 'gray',
+        tabBarShowLabel: true,
+      }}
+    >
+      <Tabs.Screen
+        name="hcp_home"
+        options={{
+          tabBarLabel: 'Drugs',
+          headerShown: true,
+          headerTitle: '',
+          headerStyle: {
+            height: 70,
+          },
+          headerRight: headerRight,
+          tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Food"
+        options={{
+          tabBarLabel: 'Food-Search',
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="food-bank" size={24} color="black" />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile-hcp"
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => <FontAwesome name="user" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="suggest-hcp"
+        options={{
+          tabBarLabel: 'Suggestions',
+          tabBarIcon: ({ color, size }) => <FontAwesome name="search" size={size} color={color} />,
+        }}
+      />
     </Tabs>
-    
   );
 }

@@ -7,7 +7,8 @@ import { useEffect } from 'react';
 import { useColorScheme,Platform } from "react-native"
 import AuthProvider from '../provider/AuthProvider';
 import QueryProvider from '../provider/QueryProvider';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import DrugsProvider from '../provider/DrugsProvider';
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,31 +31,31 @@ export default function RootLayout() {
   
     
   return (
-    <SafeAreaView  style={{flex : 1,backgroundColor :'#fff'}}>
-       <AuthProvider>
-    <QueryProvider>
-    <Stack>
+  
+    <AuthProvider>
+      <QueryProvider>
+          <DrugsProvider>
+            <Stack>
       
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(pt)" options={{ headerShown: false }} />
-      <Stack.Screen 
-     name="(hcp)" 
-     options={{ 
-       headerShown: false, 
-     }} 
-      />
-      <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-      <Stack.Screen name="hcp_dynamic/drug-details/[id]" options={{ headerShown: true }} />
-      <Stack.Screen name="hcp_dynamic/drugs/[sub_class_id]" options={{ headerShown: true }} />
-      <Stack.Screen name="hcp_dynamic/sub-classes/[class_id]" options={{ headerShown: true }} />
-      <Stack.Screen name="patient_dynamic/drugs-pt/[id]" options={{ headerShown: true }} />
-      <Stack.Screen name="+not-found" />
-    </Stack>
-    <StatusBar style='auto' />
-    </QueryProvider>
-     </AuthProvider>
-    </SafeAreaView>
-    
-    
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(pt)" options={{ headerShown: false }} />
+              <Stack.Screen 
+            name="(hcp)" 
+            options={{ 
+              headerShown: false, 
+            }} 
+              />
+              <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+              <Stack.Screen name="hcp_dynamic/drug-details/[id]" options={{ headerShown: true }} />
+              <Stack.Screen name="hcp_dynamic/drugs/[sub_class_id]" options={{ headerShown: true }} />
+              <Stack.Screen name="hcp_dynamic/sub-classes/[class_id]" options={{ headerShown: true }} />
+              <Stack.Screen name="patient_dynamic/drugs-pt/[id]" options={{ headerShown: true }} />
+              <Stack.Screen name="+not-found" />
+              <Stack.Screen name="SelectedDrugs/Selectedrugs" options={{ presentation: 'containedModal', headerShown: true }} />
+            </Stack>
+            <StatusBar style='dark'/>
+          </DrugsProvider>
+      </QueryProvider>
+    </AuthProvider>    
   );
 }

@@ -4,7 +4,7 @@
     "slug": "hcp-patient",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./src/assets/images/drugSpec.webp",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/drugSpec.webp",
         "backgroundColor": "#ffffff"
       },
       "package": "com.taslim121.hcppatient"
@@ -21,14 +21,14 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./src/assets/images/favicon.png"
+      "favicon": "./src/assets/images/drugSpec.webp"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/images/splash-icon.png",
+          "image": "./src/assets/images/drugSpec.webp",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
