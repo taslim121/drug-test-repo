@@ -41,8 +41,11 @@ const SignInScreen = () => {
         style={styles.input}
         secureTextEntry
       />
-
+      <TouchableOpacity onPress={()=> router.push('/resetpass')} style={styles.forgotButton}>
+        <Text style={{color:'#0a7ea4'}}>Forgot Password ?</Text>
+      </TouchableOpacity>
       <Button text={loading ? 'Signing in...' : 'Sign in'} onPress={signInWithEmail} disabled={loading} />
+      
       <TouchableOpacity onPress={()=> router.replace('/sign-up')} style={styles.textButton}>
         <Text style={{color:'#0a7ea4'}}>Create an account</Text>
       </TouchableOpacity>
@@ -73,6 +76,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.light.tint,
     marginVertical: 10,
+  },
+  forgotButton: {
+    alignSelf: 'flex-end',
+    fontWeight: 'bold',
+    color: Colors.light.tint,
+    marginVertical: 3,
   },
 });
 
