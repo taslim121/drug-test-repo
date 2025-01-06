@@ -4,8 +4,8 @@ import { View, StyleSheet } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import SearchBar from '../../../components/Searchbar';
-import ClassList from './Classification';
-import DrugList from './DrugList';
+import General from './general_instructions';
+import Couselling from './pt_counselling';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,12 +17,11 @@ const App = () => {
       <View style={styles.container}>
         <SearchBar filter={filter} setFilter={setFilter} />
         <Tab.Navigator>
-        <Tab.Screen name="Drugs List">
-             
-            {() => <DrugList filter={filter} />}
+        <Tab.Screen name="Counselling">
+            {() => <Couselling filter={filter} />}
           </Tab.Screen>
-          <Tab.Screen name="Classification of Drugs">
-            {() => <ClassList filter={filter} />}
+          <Tab.Screen name="General Instructions">  
+            {() => <General filter={filter} />}
           </Tab.Screen>
           
         </Tab.Navigator>

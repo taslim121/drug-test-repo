@@ -1,15 +1,15 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
 import { useDrugs } from '../../provider/DrugsProvider';
 import { FontAwesome } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter,Stack } from 'expo-router';
 import { useAuth } from '../../provider/AuthProvider';
 
 const SelectedDrugs = () => {
   const { selectedDrugs, onRemoveDrug } = useDrugs();
   const router = useRouter();
-  const { session, isPatient,isHcp } = useAuth();
-
+  const { session, isPatient, isHcp } = useAuth();
+  
   // Function to clear all selected drugs
   const clearAllDrugs = () => {
     selectedDrugs.forEach((drug) => {
@@ -19,7 +19,7 @@ const SelectedDrugs = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Selected Drugs</Text>
+      <Stack.Screen options={{headerTitle:'Selected Drugs' ,headerStyle: { backgroundColor: '#0a7ea4' }, headerTintColor: '#fff' }} />
       
       {/* Clear All Button */}
       {selectedDrugs.length > 0 && (
@@ -37,15 +37,26 @@ const SelectedDrugs = () => {
           renderItem={({ item }) => (
             <View style={styles.row}>
               <TouchableOpacity
-              style={{width:'85%'}}
-               onPress={() =>
-                  router.push({
-                    pathname: `/hcp_dynamic/drug-details/[id]`,
-                    params: { id: item.drug_id.toString(), name: item.drug_name },
-                  })
-                }><Text style={styles.drugName}>{item.drug_name}</Text></TouchableOpacity>
+                style={{ width: '85%' }}
+                onPress={() => {
+                  if (isPatient) {
+                    
+                    router.push({
+                      pathname: '/patient_dynamic/int-drugs-pt/[id]',
+                      params: { id: item.drug_id.toString(), name: item.drug_name },
+                    });
+                  } else if (isHcp) {
+                    router.push({
+                      pathname: '/hcp_dynamic/drug-details/[id]',
+                      params: { id: item.drug_id.toString(), name: item.drug_name },
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.drugName}>{item.drug_name}</Text>
+              </TouchableOpacity>
               
-              <TouchableOpacity style={{width:'15%'}} onPress={() => onRemoveDrug(item.drug_id)}>
+              <TouchableOpacity style={{ width: '15%' }} onPress={() => onRemoveDrug(item.drug_id)}>
                 <FontAwesome name="minus-circle" size={24} color="red" />
               </TouchableOpacity>
             </View>
@@ -60,7 +71,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding :15
+    padding: 7,
+    
   },
   title: {
     fontSize: 22,
@@ -81,8 +93,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#000',
     width: '100%',

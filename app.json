@@ -21,7 +21,7 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./src/assets/images/drugSpec.webp"
+      "favicon": "./src/assets/images/drugSpecIconp.png"
     },
     "plugins": [
       "expo-router",

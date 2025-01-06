@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import supabase from '../../lib/supabase'; 
+import supabase from '../lib/supabase'; 
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import RollingBar from 'react-native-rolling-bar';
 
-const fetchDrugsByFood = async (food: string) => {
+const fetchDrugsByFood = async (food: string, interactionsTable: string, drugsTable: string) => {
   if (!food.trim()) return [];
 
   const { data: interactions, error: interactionsError } = await supabase
-    .from('interactions')
+    .from(interactionsTable)
     .select('drug_id')
-    .ilike('food', `%${food.toLowerCase()}%`); //  case-insensitive search
+    .ilike('food', `%${food.toLowerCase()}%`);
 
   if (interactionsError) {
     console.error('Error fetching interactions:', interactionsError);
@@ -20,12 +21,12 @@ const fetchDrugsByFood = async (food: string) => {
 
   const drugIds = interactions.map((interaction) => interaction.drug_id);
 
-  if (drugIds.length === 0) return [];//not mtach
+  if (drugIds.length === 0) return [];
 
   const { data: drugs, error: drugsError } = await supabase
-    .from('drugs')
+    .from(drugsTable)
     .select('drug_id, drug_name')
-    .in('drug_id', drugIds); // Fetch drugs that match the drug_ids from interactions
+    .in('drug_id', drugIds);
 
   if (drugsError) {
     console.error('Error fetching drugs:', drugsError);
@@ -35,13 +36,21 @@ const fetchDrugsByFood = async (food: string) => {
   return drugs;
 };
 
-const FoodSearchScreen = () => {
-    const  router = useRouter();
+interface FoodSearchProps {
+  placeholder: string;
+  routePath: string;
+  interactionsTable: string;
+  drugsTable: string;
+}
+
+const FoodSearchComponent: React.FC<FoodSearchProps> = ({ placeholder, routePath, interactionsTable, drugsTable }) => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
+
   const { data: drugs, isLoading, error, refetch } = useQuery({
-    queryKey: ['searchDrugs', searchTerm],
-    queryFn: () => fetchDrugsByFood(searchTerm),
-    enabled: false, // search on press button
+    queryKey: [`searchDrugs-${interactionsTable}-${drugsTable}`, searchTerm],
+    queryFn: () => fetchDrugsByFood(searchTerm, interactionsTable, drugsTable),
+    enabled: false, // Only fetch on button press
   });
 
   const handleClearSearch = () => {
@@ -50,11 +59,10 @@ const FoodSearchScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Search Input */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search food interactions..."
+          placeholder={placeholder}
           placeholderTextColor="#888"
           value={searchTerm}
           onChangeText={setSearchTerm}
@@ -67,38 +75,39 @@ const FoodSearchScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Instructions on Empty Search */}
       {searchTerm === '' && !isLoading && !drugs && (
-        <Text style={styles.instructionsText}>
-          Enter a food item (e.g., "Tea","meal","coffee","dairy","Grape","Orange") to search for drug interactions.
-        </Text>
+        <View style={{ display: 'flex', alignSelf: 'center', flexDirection: 'row' }}>
+          <Text style={styles.instructionsText}>Search a food item </Text>
+          <RollingBar  interva= {100} style={{ marginTop: 20 }}>
+            <Text style={styles.instructionsText}>Orange</Text>
+            <Text style={styles.instructionsText}>Meal</Text>
+            <Text style={styles.instructionsText}>Tea</Text>
+          </RollingBar>
+        </View>
       )}
 
-      {/* Loading Indicator */}
       {isLoading && <ActivityIndicator size="large" color="#0a7ea4" style={{ marginTop: 20 }} />}
 
-      {/* Error Message */}
       {error && <Text style={styles.errorText}>Error: {error.message}</Text>}
 
-      {/* No Results Found Message */}
       {drugs && drugs.length === 0 && !isLoading && !error && searchTerm && (
         <Text style={styles.noResultsText}>No Drugs Found</Text>
       )}
 
-      {/* Results List */}
       {drugs && drugs.length > 0 && (
         <FlatList
           data={drugs}
           keyExtractor={(item) => item.drug_id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity 
-            style={styles.card}
-            onPress={() =>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() =>
                 router.push({
-                  pathname: `/hcp_dynamic/drug-details/[id]`,
+                  pathname: routePath as any,
                   params: { id: item.drug_id.toString(), name: item.drug_name },
                 })
-              }>
+              }
+            >
               <Text style={styles.drugName}>{item.drug_name}</Text>
             </TouchableOpacity>
           )}
@@ -182,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FoodSearchScreen;
+export default FoodSearchComponent;

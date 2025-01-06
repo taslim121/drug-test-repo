@@ -14,7 +14,7 @@ export default function Index() {
     return <Redirect href={'/main'} />;
   }
   if(isPatient && !isAdmin && !isHcp){
-    return <Redirect href={'/drugs-list'} />;
+    return <Redirect href={'/(pt)/pt_home/pt_counselling'} />;
   }
   if(isHcp && !isAdmin && !isPatient){
     return <Redirect href={'/(hcp)/hcp_home/DrugList'} />;
@@ -23,7 +23,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
       <Stack.Screen options={{headerShown:false}} />
-      <Link href={'/drugs-list'} asChild>
+      <Link href={'/(pt)/pt_home/pt_counselling'} asChild>
         <Button text="Patient" />
       </Link>
       <Link href={'/(hcp)/hcp_home/DrugList'} asChild>

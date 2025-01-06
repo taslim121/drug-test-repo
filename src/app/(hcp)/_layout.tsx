@@ -19,8 +19,8 @@ export default function HcpLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#a9e8fc' },
-        tabBarActiveTintColor: '#0a7ea4',
+        tabBarStyle: { backgroundColor: 'white', },
+        tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'gray',
         tabBarShowLabel: true,
       }}
@@ -39,10 +39,10 @@ export default function HcpLayout() {
         }}
       />
       <Tabs.Screen
-        name="Food"
+        name="hcp_food"
         options={{
           tabBarLabel: 'Food-Search',
-          tabBarIcon: ({ color, size }) => <MaterialIcons name="food-bank" size={24} color="black" />,
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="food-bank" size={size} color={color} />,
         }}
       />
       <Tabs.Screen

@@ -5,15 +5,14 @@ type Product = {
   drug: string;
 };
 import { useRouter } from 'expo-router';
-import supabase from '../../lib/supabase';
+import supabase from '../../../lib/supabase';
 import { useEffect, useState } from 'react';
 import React from 'react'
-import SearchBar from '../../components/Searchbar';
+import SearchBar from '../../../components/Searchbar';
 import { useQuery } from '@tanstack/react-query';
 
-const Drugs = () => {
+const Drugs: React.FC<{ filter: string }> = ({ filter }) =>  {
   const router = useRouter();
-  const [filter, setFilter] = useState<string>('');
   const {data : Drugs, isLoading, error } = useQuery<Product[]>({
     queryKey: ['general_instructions'],
     queryFn: async () => {
@@ -38,8 +37,6 @@ const Drugs = () => {
   );
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>General Instructions</Text>
-      <SearchBar filter={filter} setFilter={setFilter} />
       <FlatList
         data={filteredDrugs}
         keyExtractor={(item) => item.id.toString()}
@@ -72,19 +69,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    marginVertical: 5,
+    elevation: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    padding: 8,
+    paddingVertical: 14,
+    marginVertical: 6,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 5,
-    width: '90%',
-    alignSelf: 'center',
-    borderWidth: 1,
-    borderColor: '#000',
+    borderLeftWidth: 5,
+    borderLeftColor: '#0a7ea4',
+    borderRightWidth: 5,
+    borderRightColor: '#0a7ea4',
   },
   loadingContainer: {
     flex: 1,

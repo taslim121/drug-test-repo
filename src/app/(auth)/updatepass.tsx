@@ -1,41 +1,31 @@
-import { View, Text, Alert, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet } from 'react-native';
 import supabase from '../../lib/supabase';
 import React, { useState, useEffect } from 'react';
 import Button from '../../components/Button';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useAuth } from '../../provider/AuthProvider'; // Import AuthProvider for session checking
 
-const UpdatePasswordScreen = () => {
-  const { session, loading: authLoading } = useAuth(); // Check if user is authenticated
+const ResetPasswordScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
   const router = useRouter();
-  const { token } = useLocalSearchParams(); 
+  const { token } = useLocalSearchParams(); // Capture the session token from URL
 
   useEffect(() => {
     if (token) {
+      console.log(token);
       restoreSession();
     }
   }, [token]);
 
   async function restoreSession() {
-    if (!token) {
-      Alert.alert('Session Error', 'Invalid session token.');
-      router.replace('/sign-in');
-      return;
-    }
-    console.log(token);
-    const { data, error } = await supabase.auth.setSession({
-      access_token: Array.isArray(token) ? token[0] : token,
-      refresh_token: Array.isArray(token) ? token[0] : token,
-    });
+    const { error } = await supabase.auth.setSession({ access_token: Array.isArray(token) ? token[0] : token, refresh_token: '' });
 
     if (error) {
       Alert.alert('Session Error', 'Failed to authenticate. Try resetting again.');
       router.replace('/sign-in');
     }
-    console.log(data);
   }
 
   async function updatePassword() {
@@ -49,14 +39,11 @@ const UpdatePasswordScreen = () => {
       return;
     }
 
-    if (!session) {
-      Alert.alert('Error', 'User is not authenticated. Please sign in again.');
-      router.replace('/sign-in');
-      return;
-    }
-
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    const { error } = await supabase.auth.updateUser({ 
+      email,
+      password 
+    });
 
     if (error) {
       Alert.alert('Error', error.message);
@@ -68,25 +55,15 @@ const UpdatePasswordScreen = () => {
     setLoading(false);
   }
 
-  // Redirect unauthorized users (only if session check is completed)
-  useEffect(() => {
-    if (!authLoading && !session) {
-      Alert.alert('Unauthorized', 'You need to sign in first.');
-      router.replace('/sign-in');
-    }
-  }, [session, authLoading]);
-
-  if (authLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="blue" />
-        <Text>Checking authentication...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
+      <Text style={styles.label}>Email For reset Password </Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="jon@gmail.com"
+              style={styles.input}
+            />
       <Text style={styles.label}>New Password</Text>
       <TextInput
         value={password}
@@ -128,11 +105,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
 
-export default UpdatePasswordScreen;
+export default ResetPasswordScreen;
