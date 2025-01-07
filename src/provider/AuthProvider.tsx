@@ -1,6 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import supabase from '../lib/supabase';
-import { Session } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
+import { router } from 'expo-router';
 
 type UserProfile = {
   id: string;
@@ -15,16 +16,10 @@ type AuthData = {
   isAdmin: boolean;
   isPatient: boolean;
   isHcp: boolean;
+  restoreSession: (tokens: { access_token: string; refresh_token: string }) => Promise<void>;
 };
 
-const AuthContext = createContext<AuthData>({
-  session: null,
-  loading: true,
-  user: null,
-  isAdmin: false,
-  isPatient: false,
-  isHcp: false,
-});
+const AuthContext = createContext<AuthData | undefined>(undefined);
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [authState, setAuthState] = useState<AuthData>({
@@ -34,6 +29,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     isAdmin: false,
     isPatient: false,
     isHcp: false,
+    restoreSession: async () => {},
   });
 
   useEffect(() => {
@@ -41,34 +37,15 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Error fetching session:', error);
-        setAuthState((prevState) => ({ ...prevState, loading: false }));
+        setAuthState((prev) => ({ ...prev, loading: false }));
         return;
       }
-      if (session) {
-        fetchUserProfile(session.user.id, session);
-      } else {
-        setAuthState((prevState) => ({ ...prevState, loading: false }));
-      }
-    };
 
-    const fetchUserProfile = async (userId: string, session: Session | null = authState.session) => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return;
+      if (session) {
+        await fetchUserProfile(session.user.id, session);
+      } else {
+        setAuthState((prev) => ({ ...prev, loading: false }));
       }
-      setAuthState({
-        session,
-        loading: false,
-        user: data,
-        isAdmin: data.role === 'admin',
-        isPatient: data.role === 'patient',
-        isHcp: data.role === 'hcp',
-      });
     };
 
     fetchSession();
@@ -77,14 +54,15 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       if (session) {
         fetchUserProfile(session.user.id, session);
       } else {
-        setAuthState({
+        setAuthState((prev) => ({
           session: null,
           loading: false,
           user: null,
           isAdmin: false,
           isPatient: false,
           isHcp: false,
-        });
+          restoreSession,
+        }));
       }
     });
 
@@ -93,18 +71,47 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
-  );
+  async function fetchUserProfile(userId: string, session: Session | null = authState.session) {
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      setAuthState({
+        session,
+        loading: false,
+        user: data,
+        isAdmin: data.role === 'admin',
+        isPatient: data.role === 'patient',
+        isHcp: data.role === 'hcp',
+        restoreSession,
+      });
+    } catch (err) {
+      console.error('Unexpected error fetching user profile:', err);
+    }
+  }
+
+  async function restoreSession({ access_token, refresh_token }: { access_token: string; refresh_token: string }) {
+    const { data, error } = await supabase.auth.setSession({ access_token, refresh_token });
+
+    if (error) {
+      console.error('Error restoring session:', error);
+      return;
+    }
+    if(data){ router.replace('/updatepass');}
+    
+  }
+
+  return <AuthContext.Provider value={{ ...authState, restoreSession }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
-

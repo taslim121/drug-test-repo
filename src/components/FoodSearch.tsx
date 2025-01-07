@@ -76,13 +76,8 @@ const FoodSearchComponent: React.FC<FoodSearchProps> = ({ placeholder, routePath
       </View>
 
       {searchTerm === '' && !isLoading && !drugs && (
-        <View style={{ display: 'flex', alignSelf: 'center', flexDirection: 'row' }}>
-          <Text style={styles.instructionsText}>Search a food item </Text>
-          <RollingBar  interva= {100} style={{ marginTop: 20 }}>
-            <Text style={styles.instructionsText}>Orange</Text>
-            <Text style={styles.instructionsText}>Meal</Text>
-            <Text style={styles.instructionsText}>Tea</Text>
-          </RollingBar>
+        <View style={{ display: 'flex', alignSelf: 'center', flexDirection: 'column',marginTop: 20 }}>
+          <Text style={styles.instructionsText}>Enter Food Item to find Their Interaction (Eg. Tea, Meal,Orange,Grape,Banana) </Text>
         </View>
       )}
 
@@ -181,7 +176,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#888',
-    marginTop: 20,
   },
   noResultsText: {
     textAlign: 'center',

@@ -16,7 +16,7 @@ const main = () => {
           App
         </Text>
         <Text style={styles.text1}>
-          Find Your Drugs and Their Interactions
+          Find Your Drugs and Food Interactions
         </Text>
       </View>
       <View>

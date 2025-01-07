@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
 import supabase from '../../lib/supabase';
 import { useAuth } from '../../provider/AuthProvider';
+import { FontAwesome } from '@expo/vector-icons';
 
 const Suggest = () => {
   const { user } = useAuth();
   const [query, setQuery] = useState('Drug Missing');
   const [description, setDescription] = useState('');
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
-    { label: 'Drug Missing', value: 'Drug Missing' },
-    { label: 'Required More Info', value: 'Required More Info' },
-    { label: 'Other', value: 'Other' },
-  ]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const queryOptions = [
+    'Drug Missing',
+    'Required More Info',
+    'Other',
+  ];
 
   const handleSubmit = async () => {
     if (description === '') {
@@ -38,27 +39,61 @@ const Suggest = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Submit a Suggestion</Text>
-      <Text style={{ marginBottom: 10, fontWeight: 'bold' }}>Query</Text>
-      <DropDownPicker
-        open={open}
-        value={query}
-        items={items}
-        setOpen={setOpen}
-        setValue={setQuery}
-        setItems={setItems}
-        containerStyle={styles.dropdown}
-        style={styles.dropdownInner}
-        textStyle={styles.dropdownText}
-      />
-      <Text style={{ margin: 10, fontWeight: 'bold' }}>Description up to 50 words</Text>
+
+      <Text style={styles.label}>Query</Text>
+      <TouchableOpacity
+        style={styles.dropdownButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.dropdownText}>{query}</Text>
+        <FontAwesome
+                name="chevron-right"
+                size={15}
+                color="black"
+                style={{ transform:'90deg' }}
+              />
+      </TouchableOpacity>
+
+      {/* Modal for selecting query */}
+      <Modal
+        animationType="slide"
+        transparent
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Query Type</Text>
+            <FlatList
+              data={queryOptions}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.option}
+                  onPress={() => {
+                    setQuery(item);
+                    setModalVisible(false);
+                  }}
+                >
+                  <Text style={styles.optionText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      <Text style={styles.label}>Description (up to 50 words)</Text>
       <TextInput
         style={styles.textArea}
         value={description}
         onChangeText={setDescription}
         multiline
         numberOfLines={4}
-        maxLength={250}  
+        maxLength={250}
+        placeholder="Enter your suggestion..."
       />
+
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
@@ -70,6 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop: 10,
     backgroundColor: '#f3f2ed',
   },
   header: {
@@ -78,17 +114,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  dropdown: {
-    marginBottom: 10,
-    height: 40,
+  label: {
+    marginBottom: 8,
+    fontWeight: 'bold',
   },
-  dropdownInner: {
-    backgroundColor: '#fff',
+  dropdownButton: {
+    padding: 12,
+    marginRight: 5,
+    borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   dropdownText: {
     fontSize: 16,
-    color: 'black',
+    color: '#333',
   },
   textArea: {
     height: 100,
@@ -111,6 +155,44 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  option: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  optionText: {
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#d9534f',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

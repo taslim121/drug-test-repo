@@ -64,7 +64,7 @@ const DrugDetails: React.FC = () => {
     <View style={styles.container}>
       <Stack.Screen options={{ headerTransparent: false, title: 'General Instructions', headerStyle: { backgroundColor: '#0a7ea4' }, headerTintColor: '#fff' }} />
       <View style={styles.drugInfo}>
-        <Text style={styles.cardTitle}>Drug : {name}</Text>
+        <Text style={styles.cardTitle}>{name}</Text>
       </View>
       <FlatList
         data={directionData ? [directionData] : []}
