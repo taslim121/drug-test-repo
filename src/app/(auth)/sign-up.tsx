@@ -9,7 +9,6 @@ import {
   Modal,
   Pressable,
   FlatList,
-  ScrollView,
 } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import supabase from "../../lib/supabase";
@@ -28,7 +27,7 @@ const SignUpScreen = () => {
   const [degree, setDegree] = useState("");
   const [department, setDepartment] = useState("");
   const [institution, setInstitution] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const degreeOptions = ["MBBS", "MD", "MS", "BAMS", "BHMS", "Others"];
 
   const roleOptions = [
@@ -50,6 +49,7 @@ const SignUpScreen = () => {
       Alert.alert("Incomplete Information", "Please provide your qualification details.");
       return;
     }
+    setLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -66,6 +66,7 @@ const SignUpScreen = () => {
     if (error) {
       Alert.alert("Error", error.message);
     } else {
+      setLoading(false);
       Alert.alert("Success", "Please verify your email.");
     }
   }
@@ -110,7 +111,7 @@ const SignUpScreen = () => {
         </View>
       )}
 
-      <Button text="Create Account" onPress={signUpWithEmail} />
+      <Button text={loading ? 'Creating' :  'Create Account'} onPress={signUpWithEmail} />
 
       <TouchableOpacity onPress={() => router.replace("/sign-in")} style={styles.textButton}>
         <Text style={{ color: "#0a7ea4" }}>Already Have Account?</Text>
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   selectedRole: { backgroundColor: "#0a7ea4", borderColor: "#0a7ea4" },
   selectedRoleText: { color: "white" },
   roleText: { color: "black" },
-  qualificationSummary: { padding: 10, backgroundColor: "#e3f2fd", borderRadius: 5, marginBottom: 20 },
+  qualificationSummary: { padding: 10, borderRadius: 5, marginBottom: 20 },
   summaryText: { color: "#0a7ea4", fontWeight: "bold" },
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
   modalContent: { width: "90%", backgroundColor: "white", padding: 20, borderRadius: 10 },

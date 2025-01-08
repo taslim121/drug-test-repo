@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { View, TextInput, FlatList, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef  } from 'react';
+import { View, TextInput, FlatList, Text, StyleSheet, ActivityIndicator, TouchableOpacity,Animated} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import supabase from '../lib/supabase'; 
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import RollingBar from 'react-native-rolling-bar';
 
 const fetchDrugsByFood = async (food: string, interactionsTable: string, drugsTable: string) => {
   if (!food.trim()) return [];
@@ -53,6 +52,38 @@ const FoodSearchComponent: React.FC<FoodSearchProps> = ({ placeholder, routePath
     enabled: false, // Only fetch on button press
   });
 
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const rollingTextItems = [
+    "Search for 'Tea'",
+    "Search for 'Grapefruit'",
+    "Search for 'Coffee'",
+    "Search for 'Meal'",
+    "Search for 'Orange'",
+    "Search for 'Food'",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % rollingTextItems.length);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 1400);
+
+    return () => clearInterval(interval);
+  }, [fadeAnim, rollingTextItems.length]);
+
+
   const handleClearSearch = () => {
     setSearchTerm('');
   };
@@ -76,9 +107,14 @@ const FoodSearchComponent: React.FC<FoodSearchProps> = ({ placeholder, routePath
       </View>
 
       {searchTerm === '' && !isLoading && !drugs && (
-        <View style={{ display: 'flex', alignSelf: 'center', flexDirection: 'column',marginTop: 20 }}>
-          <Text style={styles.instructionsText}>Enter Food Item to find Their Interaction (Eg. Tea, Meal,Orange,Grape,Banana) </Text>
-        </View>
+        <View style={{marginTop: 20}}>
+          <Text style={styles.instructionsText}>Enter food item to find Their interactions</Text> 
+        <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'row' }}>
+        <Animated.Text style={[styles.instructionsText, { opacity: fadeAnim }]}>
+          {rollingTextItems[currentIndex]}
+        </Animated.Text>
+      </View>
+      </View>
       )}
 
       {isLoading && <ActivityIndicator size="large" color="#0a7ea4" style={{ marginTop: 20 }} />}
@@ -176,6 +212,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#888',
+    marginTop:8,
+    marginHorizontal: 10,
   },
   noResultsText: {
     textAlign: 'center',

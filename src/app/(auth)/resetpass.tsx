@@ -7,18 +7,20 @@ import { Stack,useRouter } from 'expo-router';
 const resetpass = () => {
     const [email, setEmail] = useState('');
     const router = useRouter();
+    const [loading,setLoading] = useState(false);
 
     async function resetPassword() {
         if (!email) {
           Alert.alert('Error', 'Please enter your email to reset password.');
           return;
         }
-    
+         setLoading(true);
         const { error } = await supabase.auth.resetPasswordForEmail(email);
     
         if (error) {
           Alert.alert('Error', error.message);
         } else {
+          setLoading(false);
           Alert.alert('Success', 'A password reset link has been sent to your email. PLEASE confirm that and then update the new password');
         }
     }
@@ -35,7 +37,7 @@ const resetpass = () => {
       />
 
     <Button
-        text={'Reset Password'}
+        text={loading ? 'Sending...' : 'Send Reset Link'}
         onPress={resetPassword}
     />
      

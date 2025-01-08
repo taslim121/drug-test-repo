@@ -6,7 +6,7 @@ import supabase from "../lib/supabase";
 
 export default function Index() {
   const { session, loading,isAdmin,isHcp,isPatient} = useAuth();
-
+  
   if (loading) {
     return <ActivityIndicator />;
   }

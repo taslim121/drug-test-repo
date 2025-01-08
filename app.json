@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "hcp-patient",
+    "name": "FoodRxCheck",
     "slug": "hcp-patient",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/drugSpec.webp",
-    "scheme": "myapp",
+    "scheme": "foodrxcheck",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +16,7 @@
         "foregroundImage": "./src/assets/images/drugSpec.webp",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.taslim121.hcppatient"
+      "package": "com.taslim121.foodrxcheck"
     },
     "web": {
       "bundler": "metro",

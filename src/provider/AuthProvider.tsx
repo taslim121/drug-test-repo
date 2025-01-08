@@ -1,7 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import supabase from '../lib/supabase';
-import { Session, User } from '@supabase/supabase-js';
-import { router } from 'expo-router';
+import { Session } from '@supabase/supabase-js';
 
 type UserProfile = {
   id: string;
@@ -17,6 +16,8 @@ type AuthData = {
   isPatient: boolean;
   isHcp: boolean;
   restoreSession: (tokens: { access_token: string; refresh_token: string }) => Promise<void>;
+  resetPending: boolean;
+  setResetPending: (value: boolean) => void;
 };
 
 const AuthContext = createContext<AuthData | undefined>(undefined);
@@ -30,9 +31,17 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     isPatient: false,
     isHcp: false,
     restoreSession: async () => {},
+    resetPending: false,
+    setResetPending: () => {},
   });
 
+  const setResetPending = (value: boolean) => {
+    setAuthState((prev) => ({ ...prev, resetPending: value }));
+  };
+
   useEffect(() => {
+    if (authState.resetPending) return; // Stop fetching session if resetPending is true
+
     const fetchSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
@@ -51,6 +60,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     fetchSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+
       if (session) {
         fetchUserProfile(session.user.id, session);
       } else {
@@ -62,6 +72,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           isPatient: false,
           isHcp: false,
           restoreSession,
+          resetPending: false, 
+          setResetPending,
         }));
       }
     });
@@ -69,9 +81,11 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [authState.resetPending]);
 
   async function fetchUserProfile(userId: string, session: Session | null = authState.session) {
+    if (authState.resetPending) return; // Stop fetching profile if resetPending is true
+
     try {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       
@@ -80,30 +94,33 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         session,
         loading: false,
         user: data,
         isAdmin: data.role === 'admin',
         isPatient: data.role === 'patient',
         isHcp: data.role === 'hcp',
-        restoreSession,
-      });
+        resetPending : false
+      }));
     } catch (err) {
       console.error('Unexpected error fetching user profile:', err);
     }
   }
 
   async function restoreSession({ access_token, refresh_token }: { access_token: string; refresh_token: string }) {
+    setResetPending(true); // Ensure resetPending is true BEFORE setting session
+
     const { data, error } = await supabase.auth.setSession({ access_token, refresh_token });
 
     if (error) {
       console.error('Error restoring session:', error);
+      setResetPending(false); // Reset if session fails to restore
       return;
     }
-    if(data){ router.replace('/updatepass');}
-    
-  }
+}
+
 
   return <AuthContext.Provider value={{ ...authState, restoreSession }}>{children}</AuthContext.Provider>;
 }
