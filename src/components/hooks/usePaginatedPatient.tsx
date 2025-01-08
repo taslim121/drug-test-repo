@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import supabase from '../../lib/supabase';
+import supabase from '../../app/lib/supabase';
 
 const fetchDrugs = async ({ pageParam = 0 }) => {
   const limit = 50; 

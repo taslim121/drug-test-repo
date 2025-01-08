@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking, Image } from 'react-native';
 import { Stack, useLocalSearchParams, Redirect } from 'expo-router';
-import supabase from '../../../lib/supabase';
+import supabase from '../../lib/supabase';
 import { Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../provider/AuthProvider';

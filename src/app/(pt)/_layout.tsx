@@ -1,7 +1,6 @@
 import { Tabs, Redirect } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from '../../provider/AuthProvider';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import headerRight from '../../utils/headerRight';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 

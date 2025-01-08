@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "FoodRxCheck",
-    "slug": "hcp-patient",
+    "slug": "foodrxncheck",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/drugSpec.webp",
+    "icon": "./src/assets/images/drugSpecs.png",
     "scheme": "foodrxcheck",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,22 +13,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/drugSpec.webp",
+        "foregroundImage": "./src/assets/images/drugSpecs.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.taslim121.foodrxcheck"
+      "package": "com.cyanide121.foodrxcheck"
     },
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./src/assets/images/drugSpecIconp.png"
+      "favicon": "./src/assets/images/drugSpecs.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/images/drugSpec.webp",
+          "image": "./src/assets/images/drugSpecs.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -43,9 +43,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "70b4a9e1-d1dc-4350-9d1f-a32c09321799"
+        "projectId": "39e0ba49-f188-4162-ad3b-b9e28c5f550b"
       }
     },
-    "owner": "taslim121"
+    "owner": "cyanide1234"
   }
 }
