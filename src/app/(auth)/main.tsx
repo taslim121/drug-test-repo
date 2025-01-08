@@ -9,7 +9,7 @@ const main = () => {
     <View style={{ backgroundColor: 'white', flex: 1 }}>
       <Stack.Screen options={{ headerTransparent: true, headerTitle: '' }} />
       <View style={styles.container}>
-        <Image source={require('../../assets/images/drugSpec.webp')} style={{ width: 270, height: 200, alignSelf: 'center', marginBottom: 10, resizeMode: 'contain' }} />
+        <Image source={require('../../assets/images/drugSpecs.png')} style={{ width: 270, height: 200, alignSelf: 'center', marginBottom: 10, resizeMode: 'contain' }} />
         <Text style={styles.text}>
           Your Ultimate
           <Text style={{ color: '#0a7ea4' }}> Drug Interaction </Text>
