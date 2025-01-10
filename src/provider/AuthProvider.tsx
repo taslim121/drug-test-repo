@@ -1,6 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import supabase from '../app/lib/supabase';
 import { Session } from '@supabase/supabase-js';
+import { Alert } from 'react-native';
 
 type UserProfile = {
   id: string;
@@ -110,12 +111,11 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   }
 
   async function restoreSession({ access_token, refresh_token }: { access_token: string; refresh_token: string }) {
-    setResetPending(true); // Ensure resetPending is true BEFORE setting session
-
     const { data, error } = await supabase.auth.setSession({ access_token, refresh_token });
-
+    Alert.alert('Resotored Session');
     if (error) {
       console.error('Error restoring session:', error);
+      Alert.alert('Error', 'Failed to restore session. Try resetting your password again.');
       setResetPending(false); // Reset if session fails to restore
       return;
     }

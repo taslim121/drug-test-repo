@@ -52,7 +52,7 @@ export default function RootLayout() {
               <Stack.Screen name="patient_dynamic/drugs-pt/[id]" options={{ headerShown: true }} />
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="updatepass" />
-              <Stack.Screen name="SelectedDrugs/Selectedrugs" options={{ presentation: 'containedModal', headerShown: true }} />
+              <Stack.Screen name="SelectedDrugs/Selectedrugs" options={{  headerShown: true }} />
             </Stack>
             <StatusBar style='dark'/>
           </DrugsProvider>

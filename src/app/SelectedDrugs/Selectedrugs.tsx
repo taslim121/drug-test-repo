@@ -57,7 +57,7 @@ const SelectedDrugs = () => {
               </TouchableOpacity>
               
               <TouchableOpacity style={{ width: '15%' }} onPress={() => onRemoveDrug(item.drug_id)}>
-                <FontAwesome name="minus-circle" size={24} color="red" />
+                <FontAwesome name="minus-circle" size={24} color="gray" />
               </TouchableOpacity>
             </View>
           )}
@@ -103,13 +103,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   clearButton: {
-    backgroundColor: '#ff4747',
+    backgroundColor: '#0a7ea4',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 50,
     marginBottom: 10,
     alignItems: 'center',
     alignSelf: 'center',
-    width: '50%',
+    width: '40%',
   },
   clearButtonText: {
     color: '#fff',

@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "FoodRxCheck",
-    "slug": "foodrxncheck",
+    "slug": "foodcheck",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/drugSpecs.png",
-    "scheme": "foodrxcheck",
+    "scheme": "foodcheck",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +16,19 @@
         "foregroundImage": "./src/assets/images/drugSpecs.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cyanide121.foodrxcheck"
+      "package": "com.cyanide121.foodcheck",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "foodcheck",
+              "host": "CaptureReset"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -43,7 +55,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "39e0ba49-f188-4162-ad3b-b9e28c5f550b"
+        "projectId": "a7d3d0e5-f4ed-4384-a0ad-4e11e7171000"
       }
     },
     "owner": "cyanide1234"

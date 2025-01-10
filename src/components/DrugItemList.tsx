@@ -72,7 +72,7 @@ const DrugListComponent: React.FC<DrugListProps> = ({ filter, usePaginatedDrugs,
                 <FontAwesome
                   name={isSelected ? 'minus-circle' : 'plus-circle'}
                   size={20}
-                  color={isSelected ? 'red' : 'green'}
+                  color={isSelected ? 'gray' : 'green'}
                 />
               </TouchableOpacity>
             </View>
