@@ -13,7 +13,7 @@ type Product = {
 
 const fetchImageUrl = async (path: string) => {
   const { data, error } = await supabase.storage
-    .from('direction-of-use-image')
+    .from('direction_of_use_images')
     .createSignedUrl(path, 60 * 60); 
   if (error) {
     throw new Error(error.message);

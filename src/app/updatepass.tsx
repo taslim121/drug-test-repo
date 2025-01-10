@@ -1,6 +1,6 @@
 import { View, Text, Alert, TextInput, StyleSheet } from 'react-native';
 import supabase from './lib/supabase';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '../components/Button';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../provider/AuthProvider';
@@ -10,56 +10,57 @@ const ResetPasswordScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const {setResetPending} = useAuth();
+  const { setResetPending } = useAuth();
+
   // Handle password update
   async function updatePassword() {
     if (!password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
-  
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match.');
       return;
     }
-  
+
     setLoading(true);
   
+    // Attempt to update password
     const { error } = await supabase.auth.updateUser({ password });
-  
+
     if (error) {
+      console.error('Error updating password:', error);
       Alert.alert('Error', error.message);
     } else {
       Alert.alert('Success', 'Password updated successfully! Please log in again.');
-      setResetPending(false); 
+      setResetPending(false);
       await supabase.auth.signOut();
       router.replace('/sign-in');
     }
-  
+
     setLoading(false);
   }
-  
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>New Password</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter new password"
-            style={styles.input}
-            secureTextEntry
-          />
-          <Text style={styles.label}>Confirm Password</Text>
-          <TextInput
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm new password"
-            style={styles.input}
-            secureTextEntry
-          />
-          <Button text={loading ? 'Updating...' : 'Update Password'} onPress={updatePassword} disabled={loading} />
-      
+      <TextInput
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Enter new password"
+        style={styles.input}
+        secureTextEntry
+      />
+      <Text style={styles.label}>Confirm Password</Text>
+      <TextInput
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        placeholder="Confirm new password"
+        style={styles.input}
+        secureTextEntry
+      />
+      <Button text={loading ? 'Updating...' : 'Update Password'} onPress={updatePassword} disabled={loading} />
     </View>
   );
 };
