@@ -5,7 +5,7 @@ node_modules/
 app-example/
 # Expo
 .expo/
-src/lib/supabase.ts
+src/app/lib/supabase.ts
 dist/
 web-build/
 expo-env.d.ts
