@@ -1,33 +1,21 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking, Image } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Linking, Image, Platform } from 'react-native';
 import { Stack, useLocalSearchParams, Redirect } from 'expo-router';
 import supabase from '../../lib/supabase';
-import { Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../../../provider/AuthProvider';
+
 type Product = {
   instructions: string;
   references: string;
   image_path: string;
 };
 
-const fetchImageUrl = async (path: string) => {
-  const { data, error } = await supabase.storage
-    .from('direction_of_use_images')
-    .createSignedUrl(path, 60 * 60); 
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data.signedUrl;
+const fetchImageUrl = (path: string) => {
+  // Use the public URL for the image
+  return `https://gxrqpnlluwibbmqwkgha.supabase.co/storage/v1/object/public/direction_of_use_images/${path}`;
 };
 
-
-
 const DrugDetails: React.FC = () => {
-  const { session, isHcp } = useAuth();
-  if (!session || isHcp) {
-    return <Redirect href={'/'} />;
-  }
   const { id, name } = useLocalSearchParams<{ id: string, name: string }>();
 
   const { data: directionData, isLoading, error } = useQuery<Product>({
@@ -45,19 +33,12 @@ const DrugDetails: React.FC = () => {
     },
   });
 
-  const imageQuery = useQuery({
-    queryKey: ['image', directionData?.image_path],
-    queryFn: () => fetchImageUrl(directionData?.image_path || ''),
-    enabled: !!directionData?.image_path, // Only fetch if image_path exists
-    staleTime: 30 * 60 * 1000,
-  });
-
-  if (isLoading || imageQuery.isLoading) {
+  if (isLoading) {
     return <ActivityIndicator style={styles.loadingContainer} size="large" color="#000" />;
   }
 
-  if (error || imageQuery.error) {
-    return <Text>Error: {(error || imageQuery.error)?.message}</Text>;
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
   }
 
   return (
@@ -74,15 +55,18 @@ const DrugDetails: React.FC = () => {
             {item.image_path ? (
               <View>
                 <Text style={styles.cardsubTitle}>Image:</Text>
-                <Image source={{ uri: imageQuery.data }} style={{ width: 270, height: 200, alignSelf: 'center', marginBottom: 10, resizeMode: 'contain' }} />
+                <Image
+                  source={{ uri: fetchImageUrl(item.image_path) }}
+                  style={{ width: 270, height: 200, alignSelf: 'center', marginBottom: 10, resizeMode: 'contain' }}
+                />
               </View>
             ) : null}
-            {item.instructions?(
+            {item.instructions ? (
               <View>
                 <Text style={styles.cardsubTitle}>Instruction:</Text>
                 <Text style={styles.cardText}>{item.instructions}</Text>
               </View>
-            ):null}
+            ) : null}
           </View>
         )}
       />
@@ -140,7 +124,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: '#333',
   },
- 
 });
 
 export default DrugDetails;

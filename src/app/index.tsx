@@ -5,7 +5,7 @@ import { useAuth } from "../provider/AuthProvider";
 import supabase from "./lib/supabase";
 
 export default function Index() {
-  const { session, loading,isAdmin,isHcp,isPatient} = useAuth();
+  const { session, loading,isAdmin,isHcp} = useAuth();
   
   if (loading) {
     return <ActivityIndicator />;
@@ -13,10 +13,7 @@ export default function Index() {
   if (!session) {
     return <Redirect href={'/main'} />;
   }
-  if(isPatient && !isAdmin && !isHcp){
-    return <Redirect href={'/(pt)/pt_home/pt_counselling'} />;
-  }
-  if(isHcp && !isAdmin && !isPatient){
+  if(isHcp && !isAdmin ){
     return <Redirect href={'/(hcp)/hcp_home/DrugList'} />;
   }
 

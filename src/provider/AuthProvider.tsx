@@ -14,9 +14,7 @@ type AuthData = {
   loading: boolean;
   user: UserProfile | null;
   isAdmin: boolean;
-  isPatient: boolean;
   isHcp: boolean;
-  restoreSession: (tokens: { access_token: string; refresh_token: string }) => Promise<void>;
   resetPending: boolean;
   setResetPending: (value: boolean) => void;
 };
@@ -29,9 +27,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     loading: true,
     user: null,
     isAdmin: false,
-    isPatient: false,
+   
     isHcp: false,
-    restoreSession: async () => {},
     resetPending: false,
     setResetPending: () => {},
   });
@@ -70,9 +67,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           loading: false,
           user: null,
           isAdmin: false,
-          isPatient: false,
           isHcp: false,
-          restoreSession,
           resetPending: false, 
           setResetPending,
         }));
@@ -101,7 +96,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         loading: false,
         user: data,
         isAdmin: data.role === 'admin',
-        isPatient: data.role === 'patient',
         isHcp: data.role === 'hcp',
         resetPending : false
       }));
@@ -110,19 +104,10 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     }
   }
 
-  async function restoreSession({ access_token, refresh_token }: { access_token: string; refresh_token: string }) {
-    const { data, error } = await supabase.auth.setSession({ access_token, refresh_token });
-    Alert.alert('Resotored Session');
-    if (error) {
-      console.error('Error restoring session:', error);
-      Alert.alert('Error', 'Failed to restore session. Try resetting your password again.');
-      setResetPending(false); // Reset if session fails to restore
-      return;
-    }
-}
+ 
 
 
-  return <AuthContext.Provider value={{ ...authState, restoreSession }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ ...authState}}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => {

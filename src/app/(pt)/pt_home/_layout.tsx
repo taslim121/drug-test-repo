@@ -17,7 +17,7 @@ const App = () => {
       <View style={styles.container}>
         <SearchBar filter={filter} setFilter={setFilter} />
         <Tab.Navigator>
-        <Tab.Screen name="Counselling">
+        <Tab.Screen name="Food-Drug Interaction">
             {() => <Couselling filter={filter} />}
           </Tab.Screen>
           <Tab.Screen name="General Instructions">  

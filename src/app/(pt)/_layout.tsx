@@ -5,10 +5,6 @@ import headerRight from '../../utils/headerRight';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function PatientLayout() {
-  const { session,isHcp} = useAuth();
-  if (!session || isHcp) {
-    return <Redirect href={'/'} />;
-  }
   return (
     
     <Tabs screenOptions={{ headerShown: false ,tabBarActiveTintColor: 'black',tabBarInactiveTintColor: 'gray',tabBarShowLabel: true,}}>
@@ -35,18 +31,8 @@ export default function PatientLayout() {
           tabBarIcon: ({ color, size }) => <MaterialIcons name="food-bank" size={size} color={color} />,
         }}
       />
-    <Tabs.Screen name='profile-pt'
-    options={{
-      tabBarLabel: 'Profile',
-      
-      tabBarIcon: ({color,size}) => (
-        <FontAwesome name="user" size={size} color={color} />
-      )
-    }
-    }
-    />
       <Tabs.Screen
-        name="suggest-drugs" // Corrected route name
+        name="suggest-drugs"
         options={{
           tabBarLabel: 'Suggestion',
          

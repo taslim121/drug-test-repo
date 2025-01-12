@@ -8,7 +8,7 @@ import { useAuth } from '../../provider/AuthProvider';
 const SelectedDrugs = () => {
   const { selectedDrugs, onRemoveDrug } = useDrugs();
   const router = useRouter();
-  const { session, isPatient, isHcp } = useAuth();
+  const { isHcp } = useAuth();
   
   // Function to clear all selected drugs
   const clearAllDrugs = () => {
@@ -39,15 +39,16 @@ const SelectedDrugs = () => {
               <TouchableOpacity
                 style={{ width: '85%' }}
                 onPress={() => {
-                  if (isPatient) {
+                  if (isHcp) {
+                    
+                    router.push({
+                      pathname: '/hcp_dynamic/drug-details/[id]',
+                      params: { id: item.drug_id.toString(), name: item.drug_name },
+                    });
+                  } else{
                     
                     router.push({
                       pathname: '/patient_dynamic/int-drugs-pt/[id]',
-                      params: { id: item.drug_id.toString(), name: item.drug_name },
-                    });
-                  } else if (isHcp) {
-                    router.push({
-                      pathname: '/hcp_dynamic/drug-details/[id]',
                       params: { id: item.drug_id.toString(), name: item.drug_name },
                     });
                   }
