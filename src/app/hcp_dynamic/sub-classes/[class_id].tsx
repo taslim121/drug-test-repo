@@ -18,8 +18,8 @@ type Drug = {
 };
 
 const SubClassList = () => {
-  const {session,isPatient} = useAuth();
-    if(!session || isPatient){
+  const {session} = useAuth();
+    if(!session ){
       return <Redirect href={'/'} />;
     }
   const router = useRouter();

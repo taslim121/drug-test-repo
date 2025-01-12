@@ -12,8 +12,8 @@ type Drug = {
 };
 
 const DrugList = () => {
-  const { session, isPatient } = useAuth();
-  if (!session || isPatient) {
+  const { session } = useAuth();
+  if (!session ) {
     return <Redirect href="/" />;
   }
 

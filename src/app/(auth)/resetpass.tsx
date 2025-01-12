@@ -49,6 +49,7 @@ const ResetPass = () => {
 
     if (error) {
       Alert.alert("Error", "Invalid OTP. Please try again.");
+      router.replace("/resetpass"); 
     } else {
       Alert.alert("Success", "OTP verified! Set a new password.");
       router.replace("/updatepass"); // Navigate to update password screen
@@ -67,7 +68,6 @@ const ResetPass = () => {
         }}
       />
       {step === 1 ? (
-        // 📌 Step 1: Enter Email to Send OTP
         <>
           <Text style={styles.label}>Enter your email</Text>
           <TextInput
@@ -79,7 +79,6 @@ const ResetPass = () => {
           <Button text={loading ? "Sending..." : "Send OTP"} onPress={sendOtp} />
         </>
       ) : (
-        // 📌 Step 2: Enter OTP for Verification
         <>
           <Text style={styles.label}>Enter OTP sent to {email}</Text>
           <TextInput

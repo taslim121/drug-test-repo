@@ -8,8 +8,8 @@ import DrugInteractionList from '../../../components/DrugInteractionList';
 
 const DrugDetails: React.FC = () => {
 
-  const {session,isPatient} = useAuth();
-    if(!session || isPatient){
+  const {session} = useAuth();
+    if(!session ){
       return <Redirect href={'/'} />;
     }
 return <DrugInteractionList tableName="interactions" />;

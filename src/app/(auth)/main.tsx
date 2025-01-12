@@ -1,64 +1,140 @@
-import { View, Text, StyleSheet, Button, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
+import React, { useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
 
-
-const main = () => {
+const Main = () => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
-    <View style={{ backgroundColor: 'white', flex: 1 }}>
+    <View style={styles.container}>
       <Stack.Screen options={{ headerTransparent: true, headerTitle: '' }} />
-      <View style={styles.container}>
-        <Image source={require('../../assets/images/drugSpecs.png')} style={{ width: 270, height: 200, alignSelf: 'center', marginBottom: 10, resizeMode: 'contain' }} />
-        <Text style={styles.text}>
-          Your Ultimate
+      <View style={styles.contentWrapper}>
+        <Image source={require('../../assets/images/drugSpecs.png')} style={styles.image} />
+        <Text style={styles.title}>Your Ultimate
           <Text style={{ color: '#0a7ea4' }}> Drug Interaction </Text>
           App
         </Text>
-        <Text style={styles.text1}>
-          Find Your Drugs and Food Interactions
-        </Text>
+        <Text style={styles.subtitle}>Find Your Drugs and Food Interactions</Text>
       </View>
-      <View>
-        <TouchableOpacity style={styles.btn} onPress={() => router.push('/sign-in')} >
-          <Text style={{
-            textAlign: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-          }}>Let's Get Started</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
+      <TouchableOpacity style={styles.btn} onPress={() => setModalVisible(true)}>
+        <Text style={styles.btnText}>Let's Get Started</Text>
+      </TouchableOpacity>
 
-export default main;
+      {/* Modal for Role Selection */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Continue As</Text>
+            <TouchableOpacity style={styles.optionBtn} onPress={() => { 
+              setModalVisible(false);
+              router.push('/(pt)/pt_home/pt_counselling');
+            }}>
+              <Text style={styles.optionText}>Patient</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionBtn} onPress={() => { 
+              setModalVisible(false);
+              router.push('/sign-in');
+            }}>
+              <Text style={styles.optionText}>Healthcare Professional</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default Main;
+
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    marginTop: 50,
-    
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  text: {
+  contentWrapper: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  image: {
+    width: 270,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
+  title: {
     fontFamily: 'outfit-bold',
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 30,
     textAlign: 'center',
   },
-  text1: {
+  subtitle: {
     fontFamily: 'outfit',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
     color: 'darkgray',
+    textAlign: 'center',
+    marginTop: 10,
   },
   btn: {
     backgroundColor: '#0a7ea4',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+    elevation: 5,
+  },
+  btnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  optionBtn: {
+    backgroundColor: '#fff',
     padding: 10,
     borderRadius: 5,
-    marginHorizontal: 20,
-    marginVertical: 20,
-
+    borderWidth: 1,
+    borderColor: '#0a7ea4',
+    marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  optionText: {
+    color: '#0a7ea4',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: 'gray',
   }
-})
+});

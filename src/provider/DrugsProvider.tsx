@@ -19,7 +19,7 @@ const DrugsProvider = ({ children }: PropsWithChildren) => {
     const {user} = useAuth();
   const [selectedDrugs, setSelectedDrugs] = useState<Drug[]>([]);
 
-  const userId = user?.id; 
+  const userId = user?.id || 'anonymous'; 
 
   useEffect(() => {
     const loadDrugs = async () => {

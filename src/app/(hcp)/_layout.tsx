@@ -8,10 +8,10 @@ import { useRouter } from 'expo-router';
 import  headerRight from '../../utils/headerRight'
 
 export default function HcpLayout() {
-  const { session, isPatient } = useAuth();
+  const { session } = useAuth();
   const router = useRouter();
 
-  if (!session || isPatient) {
+  if (!session) {
     return <Redirect href={'/'} />;
   }
 

@@ -19,7 +19,6 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState("patient");
   const [modalVisible, setModalVisible] = useState(false);
   const [degreeModalVisible, setDegreeModalVisible] = useState(false);
 
@@ -35,17 +34,8 @@ const SignUpScreen = () => {
     { label: "Health Care Professional", value: "hcp" },
   ];
 
-  const handleRoleChange = (value: string) => {
-    setRole(value);
-    if (value === "patient") {
-      setQualification(null);
-    } else {
-      setModalVisible(true);
-    }
-  };
-
   async function signUpWithEmail() {
-    if (role === "hcp" && !qualification) {
+    if (!qualification) {
       Alert.alert("Incomplete Information", "Please provide your qualification details.");
       return;
     }
@@ -57,8 +47,8 @@ const SignUpScreen = () => {
       options: {
         data: {
           full_name: fullName,
-          role,
-          qualification: role === "hcp" ? qualification : null,
+          role:'hcp',
+          qualification: qualification ,
         },
       },
     });
@@ -76,7 +66,7 @@ const SignUpScreen = () => {
       <Stack.Screen
         options={{
           headerTransparent: false,
-          title: "Sign Up",
+          title: "Sign Up ",
           headerStyle: { backgroundColor: "#0a7ea4" },
           headerTintColor: "#fff",
         }}
@@ -91,17 +81,10 @@ const SignUpScreen = () => {
       <TextInput value={password} onChangeText={setPassword} placeholder="Enter your password" style={styles.input} secureTextEntry />
 
       <Text style={styles.label}>Role</Text>
-      <View style={styles.roleContainer}>
-        {roleOptions.map((item) => (
-          <TouchableOpacity
-            key={item.value}
-            style={[styles.roleButton, role === item.value && styles.selectedRole]}
-            onPress={() => handleRoleChange(item.value)}
-          >
-            <Text style={[styles.roleText, role === item.value && styles.selectedRoleText]}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+  
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.qualificationButton}>
+        <Text style={styles.qualificationButtonText}>{qualification ? "Edit Qualification" : "Enter Qualification"}</Text>
+      </TouchableOpacity>
 
       {qualification && (
         <View style={styles.qualificationSummary}>
@@ -180,8 +163,6 @@ const styles = StyleSheet.create({
   label: { color: "gray", marginBottom: 5 },
   input: { borderWidth: 1, borderColor: "gray", padding: 10, marginBottom: 20, backgroundColor: "white", borderRadius: 5 },
   textButton: { alignSelf: "center", marginVertical: 10 },
-  roleContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 20 },
-  roleButton: { flex: 1, justifyContent:'center',padding:5, marginHorizontal: 5, borderWidth: 1, borderColor: "gray", borderRadius: 5, alignItems: "center" },
   selectedRole: { backgroundColor: "#0a7ea4", borderColor: "#0a7ea4" },
   selectedRoleText: { color: "white" },
   roleText: { color: "black" },
@@ -198,6 +179,9 @@ const styles = StyleSheet.create({
   cancelButton: { backgroundColor: "gray" },
   submitButton: { backgroundColor: "#0a7ea4" },
   buttonText: { color: "white", fontWeight: "bold" },
+  qualificationButton: { borderWidth:1,borderColor:'#0a7ea4', padding: 10, borderRadius: 5, alignItems: "center",alignSelf:'center' ,marginBottom: 10,width:'60%' },
+  qualificationButtonText: { color: "#0a7ea4", fontWeight: "bold" },
 });
 
 export default SignUpScreen;
+

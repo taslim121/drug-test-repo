@@ -2,7 +2,7 @@ import { View, Text, Alert, TextInput, StyleSheet } from 'react-native';
 import supabase from './lib/supabase';
 import React, { useState } from 'react';
 import Button from '../components/Button';
-import { useRouter } from 'expo-router';
+import { useRouter,Stack } from 'expo-router';
 import { useAuth } from '../provider/AuthProvider';
 
 const ResetPasswordScreen = () => {
@@ -44,6 +44,14 @@ const ResetPasswordScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen
+              options={{
+                headerTransparent: false,
+                title: "Update Password",
+                headerStyle: { backgroundColor: "#0a7ea4" },
+                headerTintColor: "#fff",
+              }}
+            />
       <Text style={styles.label}>New Password</Text>
       <TextInput
         value={password}

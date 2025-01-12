@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingTop: 30,
     backgroundColor: '#f3f2ed',
   },
   profileContainer: {
@@ -86,14 +87,9 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     backgroundColor: '#0a7ea4',
     color: '#fff',
-    paddingTop: 8,
     textAlign: 'center',
     textAlignVertical: 'center',
     marginRight: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
     elevation: 5,
   },
   welcomeText: {
